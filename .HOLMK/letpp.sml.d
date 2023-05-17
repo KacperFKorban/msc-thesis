@@ -1,0 +1,1 @@
+letpp.uo: letpp.ui /home/kpi/HOL/sigobj/GrammarSpecials.uo /home/kpi/HOL/sigobj/HolKernel.uo /home/kpi/HOL/sigobj/Parse.uo /home/kpi/HOL/sigobj/boolLib.uo /home/kpi/HOL/sigobj/pairSyntax.uo /home/kpi/HOL/sigobj/smpp.uo /home/kpi/HOL/sigobj/term_pp_types.uo /home/kpi/HOL/sigobj/term_pp_utils.uo 

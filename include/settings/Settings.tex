@@ -1,0 +1,203 @@
+% CREATED BY DAVID FRISK, 2016
+
+%For HOL declarations
+\usepackage{holtexbasic,proof}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{alltt}
+\usepackage{holtexbasic}
+\usepackage{flushend}
+% \theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+% BASIC SETTINGS
+\usepackage{moreverb}								% List settings
+\usepackage{textcomp}								% Fonts, symbols etc.
+\usepackage{lmodern}								% Latin modern font
+\usepackage{helvet}									% Enables font switching
+\usepackage[T1]{fontenc}							% Output settings
+\usepackage[english]{babel}							% Language settings
+\usepackage[utf8]{inputenc}							% Input settings
+\usepackage{newunicodechar}
+\usepackage{amsmath}								% Mathematical expressions (American mathematical society)
+\usepackage{amssymb}								% Mathematical symbols (American mathematical society)
+\usepackage{graphicx}								% Figures
+\usepackage{subfig}									% Enables subfigures
+\numberwithin{equation}{chapter}					% Numbering order for equations
+\numberwithin{figure}{chapter}						% Numbering order for figures
+\numberwithin{table}{chapter}						% Numbering order for tables
+\usepackage{minted}						    		% Enables source code listings
+\usepackage{chemfig}								% Chemical structures
+\usepackage[top=3cm, bottom=3cm,
+			inner=3cm, outer=3cm]{geometry}			% Page margin lengths
+\usepackage{eso-pic}								% Create cover page background
+\newcommand{\backgroundpic}[3]{
+	\put(#1,#2){
+	\parbox[b][\paperheight]{\paperwidth}{
+	\centering
+	\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{#3}}}}
+\usepackage{float} 									% Enables object position enforcement using [H]
+\usepackage{parskip}								% Enables vertical spaces correctly
+\usepackage{datetime} %date formatting tools
+\usepackage{fixltx2e}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{ebproof}
+\usepackage{stackengine}
+\usepackage{alltt}
+\usepackage{setspace}
+\usepackage{imakeidx}
+\usepackage{keyval}% http://ctan.org/pkg/keyval
+\usepackage{environ}% http://ctan.org/pkg/environ
+\usepackage{lipsum}% http://ctan.org/pkg/lipsum
+\usepackage{doi}
+\usepackage{microtype}
+
+% CODE SNIPPET SETTINGS
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Haskell,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=fullflexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+	keepspaces=true
+}
+
+% TODO-command
+\newcommand{\todoo}[1]{\textcolor{red}{TODO: #1}\PackageWarning{TODO:}{#1!}}
+
+% For derivation trees
+\newcommand{\nothing}{\varnothing}
+
+\ebproofnewstyle{small}{
+	separation = 1em, rule margin = .5ex,
+	center = false,
+	template = \footnotesize{\inserttext},
+	left template = \footnotesize{\inserttext},
+	right template = \footnotesize{\inserttext},
+	right label template = \footnotesize\inserttext,
+	left label template = \footnotesize\inserttext
+}
+
+%inlined code command
+% \newcommand{\inc}[1]{\[\texttt{\lstinline{#1}}\]}
+
+% New unicode chars
+\newunicodechar{≅}{\cong}
+
+% OPTIONAL SETTINGS (DELETE OR COMMENT TO SUPRESS)
+
+% Disable automatic indentation (equal to using \noindent)
+\setlength{\parindent}{0em}
+
+% HOL settings
+\renewcommand{\HOLTokenTurnstile}{\ensuremath{\vdash\rule{-0.19em}{0em}}}
+\renewcommand{\HOLConst}[1]{\textsf{#1}}
+\renewcommand{\HOLFieldName}[1]{\textsf{#1}}
+\renewcommand{\HOLSymConst}[1]{\HOLConst{#1}}
+\renewcommand{\HOLTyOp}[1]{\HOLConst{#1}}
+\renewcommand{\HOLinline}[1]{\textsf{\ensuremath{#1}}}
+\renewcommand{\HOLKeyword}[1]{\mathsf{#1}}
+\renewcommand{\HOLTokenBar}{\ensuremath{\mathtt{|}}}
+\renewcommand{\HOLTokenDoublePlus}{\ensuremath{+\rule{-0.2em}{0em}+}}
+\renewcommand{\HOLTokenLeftrec}{\ensuremath{\langle\!|\;}}
+\renewcommand{\HOLTokenRightrec}{\ensuremath{\;|\!\rangle}}
+\renewcommand{\HOLTokenLsl}{\raisebox{.15em}{\ensuremath{}\scriptsize{\textless\rule{-0.1em}{0em}\textless}{}}}
+\newcommand{\TODO}[1]{\textbf{[TODO: {#1}]}}
+
+\newcommand{\progterm}[0]{\Downarrow_{\mathsf{prog}}}
+\newcommand{\asmterm}[0]{\Downarrow_{\mathsf{asm}}}
+\newcommand{\expterm}[0]{\Downarrow_{\mathsf{exp}}}
+
+\newcommand{\progdiv}[0]{\Uparrow_{\mathsf{prog}}}
+\newcommand{\asmdiv}[0]{\Uparrow_{\mathsf{asm}}}
+\newcommand{\expdiv}[0]{\Uparrow_{\mathsf{exp}}}
+
+\NewEnviron{holthmenv}{%
+  \[
+  \scalebox{1.0}{\begin{array}[t]{l}
+  \BODY
+  \end{array}}
+  \]}
+\NewEnviron{holthmenvr}{%
+  \[
+  \scalebox{1.0}{\begin{array}[t]{rll}
+  \BODY
+  \end{array}}
+  \]}
+\NewEnviron{holthmenvl}{%
+	\begin{equation}\begin{aligned}
+		\scalebox{1.0}{\begin{array}[t]{l}\BODY\end{array}}
+	\end{aligned}\end{equation}}
+
+% Caption settings (aligned left with bold name)
+\usepackage[labelfont=bf, textfont=normal,
+			justification=justified,
+			singlelinecheck=false]{caption}
+
+
+% Activate clickable links in table of contents
+\usepackage{hyperref}
+\hypersetup{colorlinks, citecolor=black,
+   		 	filecolor=black, linkcolor=black,
+    		urlcolor=black}
+
+
+% Define the number of section levels to be included in the t.o.c. and numbered	(3 is default)
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{5}
+
+
+% Chapter title settings
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\Huge\bfseries\filcenter}
+  {{\fontsize{50pt}{1em}\vspace{-4.2ex}\selectfont \textnormal{\thechapter}}}{1ex}{}[]
+
+
+% Header and footer settings (Select TWOSIDE or ONESIDE layout below)
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\space#1}{}}
+
+
+% Select one-sided (1) or two-sided (2) page numbering
+\def\layout{2}	% Choose 1 for one-sided or 2 for two-sided layout
+% Conditional expression based on the layout choice
+\ifnum\layout=2	% Two-sided
+    \fancyhf{}
+	\fancyhead[LE,RO]{\nouppercase{ \leftmark}}
+	\fancyfoot[LE,RO]{\thepage}
+	\fancypagestyle{plain}{			% Redefine the plain page style
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+	\fancyfoot[LE,RO]{\thepage}}
+\else			% One-sided
+  	\fancyhf{}
+	\fancyhead[C]{\nouppercase{ \leftmark}}
+	\fancyfoot[C]{\thepage}
+\fi
+
+
+% Enable To-do notes
+\usepackage[textsize=tiny]{todonotes}   % Include the option "disable" to hide all notes
+\setlength{\marginparwidth}{2.5cm}
+
+
+% Supress warning from Texmaker about headheight
+\setlength{\headheight}{15pt}

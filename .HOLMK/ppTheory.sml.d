@@ -1,0 +1,1 @@
+ppTheory.uo: ppTheory.ui /home/kpi/HOL/sigobj/Globals.uo /home/kpi/HOL/sigobj/HOLdict.uo /home/kpi/HOL/sigobj/Parse.uo /home/kpi/HOL/sigobj/Term.uo /home/kpi/HOL/sigobj/Theory.uo /home/kpi/HOL/sigobj/TheoryReader.uo /home/kpi/HOL/sigobj/Thm.uo /home/kpi/HOL/sigobj/Type.uo /home/kpi/pure/compiler/backend/passes/proofs/pure_inline_cexpProofTheory.uo 

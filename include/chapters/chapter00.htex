@@ -1,0 +1,112 @@
+\chapter{Introduction}
+\label{introduction}
+%
+
+\section{Compilers}
+\label{introduction:compilers}
+%
+
+Compilers are critical parts of the software development process. And since
+we always assume that they work as expected, the goal of every compiler is to
+generate, in this order:
+\begin{enumerate}
+    \item Correct code
+    \item Efficient code
+\end{enumerate}
+
+\subsection{Compiler Correctness}
+\label{introduction:compilers:compiler_correctness}
+
+To address the first goal, research into verified compilers is becoming more and
+more prevalent. The first well-known verified compiler for a non-trivial
+programming language was CompCert C -- a verified compiler for a subset of the C language.
+When it comes to functional programming languages, the best-known such compiler
+is CakeML \cite{cakeml} -- a verified compiler for Standard ML. 
+
+\subsection{PureCake}
+\label{introduction:compilers:purecake}
+%
+
+PureCake is a verified compiler for a Haskell-like language. That is a pure,
+functional language with lazy evaluation and monadic effects. The syntax
+supported by PureCake is indentation based to best mimic Haskell's syntax.
+PureCake also provides proof of its type soundness and the correctness of its
+Hindley-Milner style type inference. PureCake compiles the source code into
+CakeML code and it also contains formal proof of the correctness of its
+compilation process. So if we combine that with the proof of correctness for the
+source-to-machine-code compilation of CakeML, the whole PureCake compilation
+pipeline is formally verified to be correct.
+
+\subsection{Compiler optimizations}
+\label{introduction:compilers:compiler_optimizations}
+%
+
+Research on compiler optimizations aims to address the second goal,
+\textit{"Efficient code"}, from above. This part, despite being of a lesser
+priority, is more widely applied in compilers used in production. So the
+state-of-the-art on compiler optimizations is very high compared to compiler
+correctness verification. That is mainly because one of the biggest reasons
+people moved away from low-level languages, was that compilers were able to
+generate more efficient low-level code than a human programmer.
+
+
+\section{Project Goal}
+\label{introduction:project_goal}
+%
+
+The goal of this project is to add the function inlining optimization
+transformation and its correctness proof to the PureCake verified compiler.
+
+\subsection{Function Inlining}
+\label{introduction:project_goal:function_inlining}
+%
+
+Pure lazy functional languages have the advantage of being easier to argue about
+thanks to referential transparency. But lazy evaluation can also take a toll on
+the runtime performance \cite{lazyvseager}. That is why it is crucial to perform
+more optimizations that will make their performance comparable to eagerly
+evaluated languages. More specifically in GHC -- the most significant Haskell compiler, function inlining is one of the most
+essential types of optimizations \cite{secretsghc}.
+
+Function inlining is a transformation that replaces a function call with a copy
+of its body. For example, for the following expression written in Haskell:
+
+\begin{lstlisting}
+let x = foo 1
+in bar x
+\end{lstlisting}
+
+The body of x can be copied and inserted into its use site, like so:
+
+\begin{lstlisting}
+let x = foo 1
+in bar (foo 1)
+\end{lstlisting}
+
+Such optimizations are important because they reduce the number of function
+calls and, perhaps more importantly, allow for other optimizations to work (e.g.
+dead code elimination). However, since every function body can be often copied more
+than once, incautious implementations of the optimizations can come at the cost
+of program size. Therefore, heuristic algorithms are often used to determine when
+inlining is worth the cost of added code size.
+
+Implementations of optimizations are a major source of bugs in compilers
+\cite{optimizationbugs}. Therefore it is important for any such transformation
+to preserve the semantics of the program. And thanks to the fact that the
+PureCake compiler already consists of proof of its correctness, adding a
+semantics preservation proof of the optimization will make sure that the
+generated output code is still correct.
+
+\section{Thesis Outline}
+\label{introduction:thesis_outline}
+%
+
+The report is structured in the following way: Chapter \ref{background}
+introduces the necessary background to understand the technical aspects of the
+project. Next, Chapter \ref{verified_inlining} describes the approach to
+implementing and proving the correctness of the inlining optimization. Chapter
+\ref{verified_specialization} describes the approach of accommodating function
+specialization into the inlining pass and the implementation of the
+transformation. After that, Chapter \ref{results} describes the results of the
+project and evaluates them. Finally, Chapter \ref{conclusions} summarises the
+work done and discusses related work as well as future work.

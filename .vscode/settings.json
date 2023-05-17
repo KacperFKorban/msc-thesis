@@ -1,0 +1,17 @@
+{
+  "files.watcherExclude": {
+    "**/._*": true,
+    "**/chapter*.tex": true,
+    "**/target": true
+  },
+  "files.exclude": {
+    "**/._*": true,
+    "**/chapter*.tex": true
+  },
+  "grammarly.selectors": [
+    {
+      "language": "latex",
+      "scheme": "file"
+    }
+  ]
+}

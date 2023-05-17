@@ -1,0 +1,98 @@
+\chapter{Verified Specialization}
+\label{verified_specialization}
+%
+
+This chapter describes work done on the inlining specialization. It concentrates
+on the approach to proving the correctness of the pass and the chosen
+optimization algorithm.
+
+\section{Goal}
+\label{verified_specialization:goal}
+%
+
+The specialization optimization is slightly more complex than just inlining.
+Inlining is an optimization that substitutes \HOLtm{Let} bindings, whereas
+specialization uses \HOLtm{Letrec} -- recursive declarations. The main idea of
+specialization is to be able to create specialized versions of recursive
+functions near the call site. Considering the following example:
+
+\begin{lstlisting}
+letrec map = \f -> \lst -> case lst of
+  [] -> []
+  (x:xs) -> f x : map f xs
+in
+  let foo = (\x -> x + 1) 
+  in map foo
+\end{lstlisting}
+
+The specialization pass would ideally create a copy of the definition of
+\HOLtm{map} and insert it near the call site with all possible arguments
+specialized. So for the given example, a specializing pass would produce
+the following code:
+
+\begin{lstlisting}
+letrec map = \f -> \lst -> case lst of
+  [] -> []
+  (x:xs) -> f x : map f xs
+in
+  let foo = (\x -> x + 1) 
+  in 
+    letrec map = \lst -> case lst of
+      [] -> []
+      (x:xs) -> foo x : map foo xs
+    in map
+\end{lstlisting}
+
+Similarly to the inlining pass, this pass should also only apply this optimization
+when the recursive function is immediately applied to an argument, otherwise
+the compiler would just end up adding extra code without any profit.
+That is also why, the original binding should not be removed in this pass --
+only copied.
+
+\section{Specializing approach}
+\label{verified_specialization:specializing_approach}
+%
+
+The use of specialization is accommodated by the inlining pass. When looking
+back at the definition of \lstinline{list_subst_rel_LetrecInline}. It is
+precisely the case when specialization should be applied.
+
+\begin{theorem}
+\label{verified_specialization:specializing_approach:list_subst_rel_LetrecInline}
+%
+\begin{HOLmath}
+  \HOLthm[]{pure_inline.list_subst_rel_LetrecInline}
+\end{HOLmath}
+%
+\end{theorem}
+
+This inlining case for any expression \lstinline{x} performs inlining on it,
+with the result \lstinline{y}. Allows inserting a \lstinline{Letrec} binding
+around the result and gives as the result any expression that is equivalent to
+\lstinline{Letrec [(v,t)] y}. And so, if a specialization pass gives an
+equivalent output expression, it can be used during the inlining pass. That is,
+specialization can be split into two parts for a term \HOLtm{f x}:
+
+\begin{itemize}
+  \item First inline the definition for \HOLtm{f}. This transformation could
+  give the following code:
+  \begin{lstlisting}
+  letrec f = \a -> \b -> f a c
+  in f x
+  \end{lstlisting}
+  \item Next, inline any argument that stays constant for every invocation of
+  the function inside of its definition. The example could result in:
+  \begin{lstlisting}
+  letrec f = \a -> \b -> f x c
+  in f x
+  \end{lstlisting}
+\end{itemize}
+
+Currently, the specialization pass is unverified, though the current methodology
+allows for it to be proven correct.
+
+\section{Implementation}
+\label{verified_specialization:implementation}
+%
+
+\todoo{Add implementation details once they are implemented}

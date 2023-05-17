@@ -1,0 +1,116 @@
+\chapter{Background}
+\label{background}
+%
+
+This chapter describes the background necessary to understand the details of the
+project. Specifically, it provides a small introduction to HOL4, the interactive
+theorem prover used in the project, and the PureCake compiler, for which the
+optimization is designed.
+
+\section{HOL4}
+\label{background:hol4}
+%
+
+HOL4 is an interactive theorem prover for higher-order logic. It gives a
+programming environment to prove theorems and implement proof tools. It also
+provides automated provers and decision procedures, so that the developers can
+focus on the harder problems themselves.
+
+HOL4 uses Standard ML as an interaction language, so defining datatypes,
+functions etc. is done using Standard ML code. All HOL definitions are
+essentially Standard ML expressions.
+
+When it comes to proving theorems, it is done by combining sequences of
+higher-level combinators. Those combinators allow performing different types of
+rewrites on the assumptions and the goal.
+
+The interaction with HOL is mostly done via IDE plugins for Vim, Emacs and
+VSCode. The plugins allow for the management of the goal stack -- the stack of
+currently active proofs. They also make the process of developing proofs more
+interactive, by allowing the developer to incrementally apply tactics to the
+sequent.
+
+% Should I go into detail about using HOL? It shouldn't be necessary :thinking:
+
+\section{PureCake}
+\label{background:purecake}
+%
+
+PureCake is a verified compiler for a pure, lazy, functional programming language.
+It uses a Haskell-like syntax and type system. PureCake produces CakeML code,
+which allows for its compilation to be verified from the source to the machine code.
+
+PureCake compilation pipeline consists of four intermediate languages. For the
+purpose of this project, the relevant language is the one used in the front-end
+-- PureLang. PureCake differentiates between the compiler language and the
+the language used for transformation proofs. The declaration of the abstract syntax tree for the
+the meta-level language looks like so:
+
+\begin{HOLmath}
+  \HOLthm[]{pure_exp.datatype_exp}
+\end{HOLmath}
+
+The \lstinline{App}, \lstinline{Lam} and \lstinline{Var} constructors are
+respectively used for function application, lambda abstraction and variable
+reference. They should be familiar to any reader familiar with lambda calculus.
+\lstinline{Prim} is used for performing primitive operations. Lastly, the
+\lstinline{Letrec} constructor is a special kind of let binding, that is allowed
+to be recursive.
+
+An additional thing of note is that the meta-theory level language does not have
+a constructor for \lstinline{Let}. Non-recursive \lstinline{Let} bindings are
+expressed as a combination of \lstinline{Lam} and \lstinline{App}. The following
+shows the original and translated version of the same expression:
+
+\begin{lstlisting}
+let x = e1 in e2
+-- translates to
+(\x -> e2) e1
+\end{lstlisting}
+
+The abstract syntax tree used for compiler implementations looks
+like so:
+
+\begin{HOLmath}
+  \HOLthm[]{pure_cexp.datatype_cexp}
+\end{HOLmath}
+
+The constructors are the same as the ones for the meta-theory level language, with small differences:
+\begin{itemize}
+  \item \lstinline{App} and \lstinline{Lam} can take multiple arguments/parameters respectively.
+  \item \lstinline{Let} is added as a constructor.
+  \item \lstinline{Case} and \lstinline{NestedCase} constructors are added for
+  pattern matching. For the meta-theory level language, pattern matching is
+  translated into a combination of primitive equality checks and non-recursive
+  bindings.
+\end{itemize}
+
+\subsection{PureCake Proof Approach}
+\label{background:purecake:purecake_proof_approach}
+%
+
+When it comes to proofs, most of the proof logic is decoupled from the
+implementation functions. That is, instead of verifying specific functions that
+implement a compiler transformation, relations are defined that capture the core
+idea of the required transformation. That way the correctness of the syntactic
+transformation performed by the compiler pass is proved, and whenever the
+implementation of the compilation phase has to change, the core of the proof
+stays the same.
+
+For example, let's take a specific compiler transformation -- the transformation
+that creates fresh variable names for all bound variables in an expression. The
+steps for designing this compiler transformation are as follows:
+
+\begin{enumerate}
+  \item Define a relation \lstinline{R} that captures the idea of the
+  transformation. The meaning of this transformation will be: if \lstinline{R e1 e2}
+  holds, then \lstinline{e2} can be the result of freshening variables in \lstinline{e1}.
+  \item Prove that if \lstinline{R e1 e2} holds, then \lstinline{e1} is equivalent to \lstinline{e2}.
+  \item Define the function \lstinline{freshen} that implements the transformation.
+  \item Prove that the function satisfies the relation \lstinline{R}. In other words, prove that \lstinline{R e1 (freshen e1)} holds.
+  \item Use the previous two proofs to prove that \lstinline{e1} is equivalent to \lstinline{freshen e1}.
+\end{enumerate}
+
+This way, the semantic part of the proof stays decoupled from the implementation
+proof and when the implementation has to be changed, only the last two steps
+have to be redone.

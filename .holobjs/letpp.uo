@@ -1,0 +1,12 @@
+$(HOLDIR)/sigobj/GrammarSpecials
+$(HOLDIR)/sigobj/HolKernel
+$(HOLDIR)/sigobj/Overlay
+$(HOLDIR)/sigobj/Parse
+$(HOLDIR)/sigobj/boolLib
+$(HOLDIR)/sigobj/pairSyntax
+$(HOLDIR)/sigobj/smpp
+$(HOLDIR)/sigobj/term_pp_types
+$(HOLDIR)/sigobj/term_pp_utils
+/home/kpi/msc-thesis/letpp
+/home/kpi/msc-thesis/letpp
+/home/kpi/msc-thesis/letpp.sml

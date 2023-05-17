@@ -1,0 +1,68 @@
+all: report.pdf
+
+#every tex file in include/chapters is added automatically to the final report,
+#but htex files needs to be compiled into tex files.
+
+# Make one of these for each file containing HOL stuff.
+include/chapters/chapter00.tex: include/chapters/chapter00.htex munge.exe overrides
+	./munge.exe -w60 -m';' overrides < $< > $@
+
+include/chapters/chapter01.tex: include/chapters/chapter01.htex munge.exe overrides
+	./munge.exe -w60 -m';' overrides < $< > $@
+
+# include/chapters/chapter02.tex: include/chapters/chapter02.htex munge.exe overrides
+#	./munge.exe -w60 -m';' overrides < $< > $@
+
+include/chapters/chapter03.tex: include/chapters/chapter03.htex munge.exe overrides
+	./munge.exe -w60 -m';' overrides < $< > $@
+
+include/chapters/chapter04.tex: include/chapters/chapter04.htex munge.exe overrides
+	./munge.exe -w60 -m';' overrides < $< > $@
+
+include/chapters/chapter05.tex: include/chapters/chapter05.htex munge.exe overrides
+	./munge.exe -w60 -m';' overrides < $< > $@
+
+# Add all of them as dependencies to this thing
+report.pdf: report.tex report.bib holtexbasic.sty \
+	            include/chapters/chapter00.tex \
+	            include/chapters/chapter01.tex \
+							include/chapters/chapter02.tex \
+							include/chapters/chapter03.tex \
+							include/chapters/chapter04.tex \
+							include/chapters/chapter05.tex
+	latexmk --shell-escape --pdf report
+
+REPORT_FILES = report.pdf report.aux \
+		           report.bbl report.blg report.fdb_latexmk \
+		           report.fls report.log report.out \
+		           report.toc report.lof report.lot \
+							 _minted-report/
+
+EXTRA_CLEANS = $(HOLHEAP) $(REPORT_FILES) munge.exe holtexbasic.sty
+
+# Replace these bits with whatever it is your want to include:
+HOLHEAP = heap
+INCLUDES = $(PUREDIR)/meta-theory \
+           $(PUREDIR)/language \
+					 $(PUREDIR)/compiler/backend/passes \
+					 $(PUREDIR)/compiler/backend/passes/proofs \
+					 $(PUREDIR)/compiler/backend/languages \
+					 $(CAKEMLDIR)/misc
+HEAPDEPS = $(CAKEMLDIR)/misc/miscTheory.uo \
+	   $(CAKEMLDIR)/misc/preamble.uo \
+		 $(PUREDIR)/meta-theory/pure_inlineTheory.uo \
+		 $(PUREDIR)/language/pure_expTheory.uo \
+		 $(PUREDIR)/compiler/backend/passes/pure_inline_cexpTheory.uo \
+		 $(PUREDIR)/compiler/backend/passes/proofs/pure_inline_cexpProofTheory.uo \
+		 $(PUREDIR)/compiler/backend/languages/pure_cexpTheory.uo
+
+ppLib.uo: $(HOLHEAP)
+
+$(HOLHEAP): $(HEAPDEPS)
+	$(protect $(HOLDIR)/bin/buildheap) -o $@ $(HEAPDEPS)
+
+munge.exe : ppLib.uo ppTheory.uo letpp.uo $(HOLHEAP)
+	$(protect $(HOLDIR)/bin/mkmunge.exe) -b $(HOLHEAP) ppLib.uo ppTheory.uo letpp.uo
+
+holtexbasic.sty: $(HOLDIR)/src/TeX/holtexbasic.sty
+	$(CP) $< $@

@@ -1,0 +1,69 @@
+\chapter{Conclusions}
+\label{conclusions}
+%
+
+This chapter provides a top-level summary of the completed work as well as
+thoughts on related and future work.
+
+\section{Summary of the completed work}
+\label{conclusions:summary_of_the_completed_work}
+%
+
+As a result of this project, the following results have been achieved:
+
+\begin{itemize}
+  \item An inlining pass for PureCake has been implemented. This pass is
+  heuristic agnostic, so it can be used with any inlining strategy. This makes
+  it easy to fine-tune the pass later.
+  \item An implementation agnostic correctness proof for the inlining pass has
+  been defined and proven correct.
+  \item A correctness theorem has been proved for the inlining pass
+  implementation.
+  \item An unverified function specialization pass has been implemented. The use
+  of this pass is accommodated by both the implementation and the correctness
+  proof of the inlining pass. Also, the verification methodology used in the project
+  allows it to be proven.
+\end{itemize}
+
+\section{Related Work}
+\label{conclusions:related_work}
+%
+
+Verified compilation has been getting more and more traction recently, so there
+are quite a few verified optimizing compilers out there. The most famous of all
+CompCert \cite{compcert} implements multiple optimization passes, one of which
+is function inlining. However, the main difference between CompCert's function
+inlining is that it is done for an imperative language, that only supports
+top-level function declarations. 
+
+Another well-known verified compiler is CakeML, which is a verified compiler for
+an ML-like, impure, eagerly evaluated, functional language. PureCake uses CakeML
+as a back-end, to generate machine code. CakeML being an optimizing compiler has
+its implementation of function inlining \cite{cakemlinlining}. Though the main
+difference with this work is that CakeML is still an impure and
+eagerly-evaluated language.
+
+The research on the Pilsner compiler \cite{pilsner} also touches on topics
+relevant to this work. It is a compiler for an ML-like language that goes
+through a CPS-based intermediate language to an assembly-like target. Function
+inlining optimization is implemented for the intermediate language, because of
+that the inlining is limited to top-level functions.
+
+\section{Future Work}
+\label{conclusions:future_work}
+%
+
+Future work on this project includes the following:
+
+\begin{itemize}
+  \item The current implementation of inlining only uses a very simple
+  heuristic. This should be changed to a more sophisticated one, preferably one
+  inspired by the GHC compiler. This should also be accompanied by a more
+  comprehensive set of benchmarks.
+  \item At the time of writing, the specialization pass is not verified. This
+  should be done, to be able to introduce the whole inlining pass into the main
+  compiler pipeline.
+  \item The biggest benefit of an inlining pass is that it allows for other
+  optimization to be triggered. And so, the more optimizations on the PureLang
+  level are implemented, the more benefit the inlining pass will bring.
+\end{itemize}

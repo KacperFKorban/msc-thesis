@@ -1,0 +1,13 @@
+$(HOLDIR)/sigobj/Globals
+$(HOLDIR)/sigobj/HOLdict
+$(HOLDIR)/sigobj/Overlay
+$(HOLDIR)/sigobj/Parse
+$(HOLDIR)/sigobj/Term
+$(HOLDIR)/sigobj/Theory
+$(HOLDIR)/sigobj/TheoryReader
+$(HOLDIR)/sigobj/Thm
+$(HOLDIR)/sigobj/Type
+/home/kpi/msc-thesis/ppTheory
+/home/kpi/msc-thesis/ppTheory
+$(PUREDIR)/compiler/backend/passes/proofs/pure_inline_cexpProofTheory
+/home/kpi/msc-thesis/ppTheory.sml

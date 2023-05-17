@@ -1,0 +1,6 @@
+<<HOL message: Created theory "pp">>
+Saved definition ____ "OMIT_def"
+Saved definition ____ "foo_def"
+Saved theorem _______ "foo_omit_def"
+Exporting theory "pp" ... done.
+Theory "pp" took 1.3s to build

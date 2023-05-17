@@ -1,0 +1,25 @@
+(theory
+ (("pp" "1684318576" "33884")
+  ("pure_inline_cexpProof" "1684318562" "386442"))
+ (core-data
+  (tables
+   (string-table "realax" "real" "bool" "!" "min" "fun" "=" "pp" "OMIT"
+    "foo" "real_add" "OMIT_def" "foo_def" "foo_omit_def")
+   (id-table (0 . 1) (2 . 3) (4 . 5) (4 . 2) (4 . 6) (7 . 8) (7 . 9)
+    (0 . 10))
+   (type-table "'a" (0) (3) (2 0 2) (2 3 2) (2 1 2) (2 5 2) (2 0 3) (2 1 5)
+    (2 0 0) (2 1 1) (2 1 10) (2 1 11))
+   (term-table ("x" 0) ("x" 1) ("y" 1) ("z" 1) (1 4) (1 6) (4 7) (4 8)
+    (5 9) (5 10) (6 12) (7 11))) exports (nil) (nil)
+  ((11 (((7 0))) ("%0$0U8$0B6|U4"))
+   (12 (((7 1)))
+    ("%1%2%3$2$1B10$0@$2$1$0$2$1B11B11$0B11B11$2B11B11B7|U5|U5|U5"))
+   (13 (((7 2) (2 25 56) (7 0 1) (1 33)) "DISK_THM")
+    ("%1%2B10%3@%1%2%3%1%2B11B11%3B11B11%1B11U9B11B7"))))
+ (incorporate (incorporate-types) incorporate-consts ("foo" . 12)
+  ("OMIT" . 9)) (thm-classes nil (12 13) (14))
+ (loadable-thydata
+  ("userdef.deltas" (tag-knm 7 . 11) (tag-knm 7 . 11) (tag-knm 7 . 12)
+   (tag-knm 7 . 12))
+  ("grammardelta" (OO "OMIT" (tag-tm . "%8")) (OO "foo" (tag-tm . "%10")))
+  ("compute" (tag-knm 7 . 11) (tag-knm 7 . 12))))

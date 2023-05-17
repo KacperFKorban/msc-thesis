@@ -1,0 +1,9 @@
+$(HOLDIR)/sigobj/HolKernel
+$(HOLDIR)/sigobj/Overlay
+$(HOLDIR)/sigobj/Parse
+$(HOLDIR)/sigobj/ParseExtras
+$(HOLDIR)/sigobj/UnicodeChars
+/home/kpi/msc-thesis/letpp
+/home/kpi/msc-thesis/ppLib
+/home/kpi/msc-thesis/ppTheory
+/home/kpi/msc-thesis/ppLib.sml

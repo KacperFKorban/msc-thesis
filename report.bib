@@ -1,0 +1,164 @@
+@inproceedings{cakeml,
+  author = {Kumar, Ramana and Myreen, Magnus O. and Norrish, Michael and Owens, Scott},
+  title = {CakeML: A Verified Implementation of ML},
+  year = {2014},
+  isbn = {9781450325448},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/2535838.2535841},
+  doi = {10.1145/2535838.2535841},
+  abstract = {We have developed and mechanically verified an ML system called CakeML, which supports a substantial subset of Standard ML. CakeML is implemented as an interactive read-eval-print loop (REPL) in x86-64 machine code. Our correctness theorem ensures that this REPL implementation prints only those results permitted by the semantics of CakeML. Our verification effort touches on a breadth of topics including lexing, parsing, type checking, incremental and dynamic compilation, garbage collection, arbitrary-precision arithmetic, and compiler bootstrapping.Our contributions are twofold. The first is simply in building a system that is end-to-end verified, demonstrating that each piece of such a verification effort can in practice be composed with the others, and ensuring that none of the pieces rely on any over-simplifying assumptions. The second is developing novel approaches to some of the more challenging aspects of the verification. In particular, our formally verified compiler can bootstrap itself: we apply the verified compiler to itself to produce a verified machine-code implementation of the compiler. Additionally, our compiler proof handles diverging input programs with a lightweight approach based on logical timeout exceptions. The entire development was carried out in the HOL4 theorem prover.},
+  booktitle = {Proceedings of the 41st ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages = {179–191},
+  numpages = {13},
+  keywords = {read-eval-print loop, verified garbage collection., verified parsing, verified type checking, compiler bootstrapping, ML, compiler verification, machine code verification},
+  location = {San Diego, California, USA},
+  series = {POPL '14}
+}
+
+@inproceedings{purecake,
+  author = {Anonymous},
+  title = {PureCake: A Verified Compiler for a Lazy Functional Language},
+  year = {2022},
+  url = {https://github.com/CakeML/pure}
+}
+
+@article{secretsghc,
+  title={Secrets of the Glasgow Haskell Compiler inliner},
+  volume={12},
+  DOI={10.1017/S0956796802004331},
+  number={4-5},
+  journal={Journal of Functional Programming},
+  publisher={Cambridge University Press},
+  author={Peyton Jones, Simon and Marlow, Simon},
+  year={2002},
+  pages={393–434}
+}
+
+@article{optimizationbugs,
+  title = {An empirical study of optimization bugs in GCC and LLVM},
+  journal = {Journal of Systems and Software},
+  volume = {174},
+  pages = {110884},
+  year = {2021},
+  issn = {0164-1212},
+  doi = {https://doi.org/10.1016/j.jss.2020.110884},
+  url = {https://www.sciencedirect.com/science/article/pii/S0164121220302740},
+  author = {Zhide Zhou and Zhilei Ren and Guojun Gao and He Jiang},
+  keywords = {Empirical study, Compiler reliability, Bug characteristics, Compiler optimization bugs, Compiler testing},
+  abstract = {Optimizations are the fundamental component of compilers. Bugs in optimizations have significant impacts, and can cause unintended application behavior and disasters, especially for safety-critical domains. Thus, an in-depth analysis of optimization bugs should be conducted to help developers understand and test the optimizations in compilers. To this end, we conduct an empirical study to investigate the characteristics of optimization bugs in two mainstream compilers, GCC and LLVM. We collect about 57K and 22K bugs of GCC and LLVM, and then exhaustively examine 8,771 and 1,564 optimization bugs of the two compilers, respectively. The results reveal the following five characteristics of optimization bugs: (1) Optimizations are the buggiest component in both compilers except for the C++ component; (2) the value range propagation optimization and the instruction combine optimization are the buggiest optimizations in GCC and LLVM, respectively; the loop optimizations in both GCC and LLVM are more bug-prone than other optimizations; (3) most of the optimization bugs in both GCC and LLVM are misoptimization bugs, accounting for 57.21\% and 61.38\% respectively; (4) on average, the optimization bugs live over five months, and developers take 11.16 months for GCC and 13.55 months for LLVM to fix an optimization bug; in both GCC and LLVM, many confirmed optimization bugs have lived for a long time; (5) the bug fixes of optimization bugs involve no more than two files and three functions on average in both compilers, and around 99\% of them modify no more than 100 lines of code, while 90\% less than 50 lines of code. Our study provides a deep understanding of optimization bugs for developers and researchers. This could provide useful guidance for the developers and researchers to better design the optimizations in compilers. In addition, the analysis results suggest that we need more effective techniques and tools to test compiler optimizations. Moreover, our findings are also useful to the research of automatic debugging techniques for compilers, such as automatic compiler bug isolation techniques.}
+}
+
+@inproceedings{optimalinlining,
+  author = {Theodoridis, Theodoros and Grosser, Tobias and Su, Zhendong},
+  title = {Understanding and Exploiting Optimal Function Inlining},
+  year = {2022},
+  isbn = {9781450392051},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3503222.3507744},
+  doi = {10.1145/3503222.3507744},
+  abstract = {Inlining is a core transformation in optimizing compilers. It replaces a function call (call site) with the body of the called function (callee). It helps reduce function call overhead and binary size, and more importantly, enables other optimizations. The problem of inlining has been extensively studied, but it is far from being solved; predicting which inlining decisions are beneficial is nontrivial due to interactions with the rest of the compiler pipeline. Previous work has mainly focused on designing heuristics for better inlining decisions and has not investigated optimal inlining, i.e., exhaustively finding the optimal inlining decisions. Optimal inlining is necessary for identifying and exploiting missed opportunities and evaluating the state of the art. This paper fills this gap through an extensive empirical analysis of optimal inlining using the SPEC2017 benchmark suite. Our novel formulation drastically reduces the inlining search space size (from 2349 down to 225) and allows us to exhaustively evaluate all inlining choices on 1,135 SPEC2017 files. We show a significant gap between the state-of-the-art strategy in LLVM and optimal inlining when optimizing for binary size, an important, deterministic metric independent of workload (in contrast to performance, another important metric). Inspired by our analysis, we introduce a simple, effective autotuning strategy for inlining that outperforms the state of the art by 7% on average (and up to 28%) on SPEC2017, 15% on the source code of LLVM itself, and 10% on the source code of SQLite. This work highlights the importance of exploring optimal inlining by providing new, actionable insight and an effective autotuning strategy that is of practical utility.},
+  booktitle = {Proceedings of the 27th ACM International Conference on Architectural Support for Programming Languages and Operating Systems},
+  pages = {977–989},
+  numpages = {13},
+  keywords = {optimal inlining, autotuning, program size, compiler optimization},
+  location = {Lausanne, Switzerland},
+  series = {ASPLOS '22}
+}
+
+@INPROCEEDINGS{partialinlining,
+  author={Peng Zhao and Amaral, J.N.},
+  booktitle={17th International Symposium on Computer Architecture and High Performance Computing (SBAC-PAD'05)}, 
+  title={Function outlining and partial inlining}, 
+  year={2005},
+  volume={},
+  number={},
+  pages={101-108},
+  doi={10.1109/CAHPC.2005.26}
+}
+
+@InProceedings{toinlineornottoinline,
+  author="Zhao, Peng and Amaral, Jos{\'e} Nelson",
+  editor="Rauchwerger, Lawrence",
+  title="To Inline or Not to Inline? Enhanced Inlining Decisions",
+  booktitle="Languages and Compilers for Parallel Computing",
+  year="2004",
+  publisher="Springer Berlin Heidelberg",
+  address="Berlin, Heidelberg",
+  pages="405--419",
+  abstract="The decision to inline a procedure in the Open Research Compiler (ORC) was based on a temperature heuristics that takes into consideration the time spent in a procedure and the size of the procedure. In this paper we describe the trade-off that has to be worked out to make the correct inlining decisions. We introduce two new heuristics to enhance the ORC inlining heuristics: adaptation and cycle{\_}density. With adaptation we are allowed to vary the temperature threshold and prevent penalizing small benchmarks. With cycle{\_}density we prevent the inlining of procedures that have a high temperature in spite of being called infrequently. Experiments show that while adaptation improves the speedup obtained with inlining across the SPEC2000 suite, cycle{\_}density reduces significantly both the code growth and compilation time increase caused by inlining. We then characterize the SPEC INT2000 benchmarks according to the inlining potential of their function calls. Our enhancement is released in the ORC 2.0.",
+  isbn="978-3-540-24644-2"
+}
+
+@InProceedings{inlineexpansion,
+  author="Serrano, Manuel",
+  editor="Glaser, Hugh
+  and Hartel, Pieter
+  and Kuchen, Herbert",
+  title="Inline expansion: When and how?",
+  booktitle="Programming Languages: Implementations, Logics, and Programs",
+  year="1997",
+  publisher="Springer Berlin Heidelberg",
+  address="Berlin, Heidelberg",
+  pages="143--157",
+  abstract="Inline function expansion is an optimization that may improve program performance by removing calling sequences and enlarging the scope of other optimizations. Unfortunately it also has the drawback of enlarging programs. This might impair executable programs performance. In order to get rid of this annoying effect, we present, an easy to implement, inlining optimization that minimizes code size growth by combining a compile-time algorithm deciding when expansion should occur with different expansion frameworks describing how they should be performed. We present the experimental measures that have driven the design of inline function expansion. We conclude with measurements showing that our optimization succeeds in producing faster codes while avoiding code size increase.",
+  isbn="978-3-540-69537-0"
+}
+
+@mastersthesis{lazyvseager,
+  title={Comparison between lazy and strict evaluation},
+  author={Song, Nayeong},
+  type={{B.S.} thesis},
+  year={2020}
+}
+
+@misc{compcert,
+  url={https://compcert.org/},
+  journal={CompCert}
+} 
+
+@mastersthesis{cakemlinlining,
+  title={Verifying Function Inlinining in CakeML},
+  author={ALEXANDER MIHAJLOVIC},
+  type={{MSc.} thesis},
+  year={2018}
+}
+
+@inproceedings{10.1145/2784731.2784764,
+author = {Neis, Georg and Hur, Chung-Kil and Kaiser, Jan-Oliver and McLaughlin, Craig and Dreyer, Derek and Vafeiadis, Viktor},
+title = {Pilsner: A Compositionally Verified Compiler for a Higher-Order Imperative Language},
+year = {2015},
+isbn = {9781450336697},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2784731.2784764},
+doi = {10.1145/2784731.2784764},
+abstract = {Compiler verification is essential for the construction of fully verified software, but most prior work (such as CompCert) has focused on verifying whole-program compilers. To support separate compilation and to enable linking of results from different verified compilers, it is important to develop a compositional notion of compiler correctness that is modular (preserved under linking), transitive (supports multi-pass compilation), and flexible (applicable to compilers that use different intermediate languages or employ non-standard program transformations). In this paper, building on prior work of Hur et al., we develop a novel approach to compositional compiler verification based on parametric inter-language simulations (PILS). PILS are modular: they enable compiler verification in a manner that supports separate compilation. PILS are transitive: we use them to verify Pilsner, a simple (but non-trivial) multi-pass optimizing compiler (programmed in Coq) from an ML-like source language S to an assembly-like target language T, going through a CPS-based intermediate language. Pilsner is the first multi-pass compiler for a higher-order imperative language to be compositionally verified. Lastly, PILS are flexible: we use them to additionally verify (1) Zwickel, a direct non-optimizing compiler for S, and (2) a hand-coded self-modifying T module, proven correct w.r.t. an S-level specification. The output of Zwickel and the self-modifying T module can then be safely linked together with the output of Pilsner. All together, this has been a significant undertaking, involving several person-years of work and over 55,000 lines of Coq.},
+booktitle = {Proceedings of the 20th ACM SIGPLAN International Conference on Functional Programming},
+pages = {166–178},
+numpages = {13},
+keywords = {recursive types, higher-order state, transitivity, parametric simulations, Compositional compiler verification, abstract types},
+location = {Vancouver, BC, Canada},
+series = {ICFP 2015}
+}
+
+@article{pilsner,
+  author = {Neis, Georg and Hur, Chung-Kil and Kaiser, Jan-Oliver and McLaughlin, Craig and Dreyer, Derek and Vafeiadis, Viktor},
+  title = {Pilsner: A Compositionally Verified Compiler for a Higher-Order Imperative Language},
+  year = {2015},
+  issue_date = {September 2015},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {50},
+  number = {9},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/2858949.2784764},
+  doi = {10.1145/2858949.2784764},
+  abstract = {Compiler verification is essential for the construction of fully verified software, but most prior work (such as CompCert) has focused on verifying whole-program compilers. To support separate compilation and to enable linking of results from different verified compilers, it is important to develop a compositional notion of compiler correctness that is modular (preserved under linking), transitive (supports multi-pass compilation), and flexible (applicable to compilers that use different intermediate languages or employ non-standard program transformations). In this paper, building on prior work of Hur et al., we develop a novel approach to compositional compiler verification based on parametric inter-language simulations (PILS). PILS are modular: they enable compiler verification in a manner that supports separate compilation. PILS are transitive: we use them to verify Pilsner, a simple (but non-trivial) multi-pass optimizing compiler (programmed in Coq) from an ML-like source language S to an assembly-like target language T, going through a CPS-based intermediate language. Pilsner is the first multi-pass compiler for a higher-order imperative language to be compositionally verified. Lastly, PILS are flexible: we use them to additionally verify (1) Zwickel, a direct non-optimizing compiler for S, and (2) a hand-coded self-modifying T module, proven correct w.r.t. an S-level specification. The output of Zwickel and the self-modifying T module can then be safely linked together with the output of Pilsner. All together, this has been a significant undertaking, involving several person-years of work and over 55,000 lines of Coq.},
+  journal = {SIGPLAN Not.},
+  month = {aug},
+  pages = {166–178},
+  numpages = {13},
+  keywords = {recursive types, higher-order state, Compositional compiler verification, parametric simulations, transitivity, abstract types}
+}

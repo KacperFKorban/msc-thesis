@@ -1,0 +1,13 @@
+report.pdf
+report.aux
+report.fdb_latexmk
+report.fls
+report.lof
+report.log
+report.lot
+report.out
+report.toc
+_minted-report/
+
+!figure/**/*.pdf
+include/chapters/*.tex

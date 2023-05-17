@@ -1,0 +1,54 @@
+\chapter{Results}
+\label{results}
+%
+
+This chapter summarises and evaluates the results obtained in this project. It
+provides details on the correctness of the pass, as well as the benchmarks
+showing its quantitative results.
+
+\section{Correctness Proof}
+\label{results:correctness_proof}
+%
+
+The correctness proof of inlining is the main result of this project. It can be
+separated into the two following theorems:
+
+Firstly, the correctness of the relation that encaptures the semantic
+transformation of the inlining pass:
+
+\begin{theorem}
+%
+\begin{HOLmath}
+  \HOLthm[]{pure_inline.list_subst_rel_IMP_exp_eq_specialized}
+\end{HOLmath}
+%
+\end{theorem}
+
+The equivalence proof for the multi-inlining relation is the most important part
+of the work. This proof establishes that the multi-inlining relation preserves
+the semantics of the original program. And because the multi-inlining relation
+encodes the transformation performed by the inlining pass, this theorem proves
+the correctness of inlining as a concept.
+
+Secondly, the correctness of the inlining pass implementation:
+
+\begin{theorem}
+%
+\begin{HOLmath}
+  \HOLthm[]{pure_inline_cexpProof.inline_all_thm}
+\end{HOLmath}
+%
+\end{theorem}
+
+This theorem establishes the correctness of the full inlining pass. Like the
+relation-level proof, this theorem is defined for any expression that satisfies
+no_shadowing and is closed. It's derived from the equivalence theorem for the
+relation, thereby providing a thorough proof of the full inlining pass.
+
+Together those two theorems prove that the inlining pass does not alter the semantics
+of the input program.
+
+\section{Examples and Benchmarks}
+\label{results:benchmarks}
+
+\todoo{Possible benchmark results.}
