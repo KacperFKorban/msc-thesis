@@ -4,7 +4,10 @@
 
 This chapter describes work done on the inlining optimization. It concentrates
 on the approach to proving the correctness of the inlining transformation as
-well as the correctness of the optimization.
+well as the correctness of the optimization. It shows three approaches for
+defining the correctness relation: a single inlining relation, a deep inlining
+relation and a multi-inlining relation. The correctness proof of the
+implementation is shown based on the final one.
 
 \section{Goal}
 \label{verified_inlining:goal}
@@ -25,7 +28,7 @@ programming that utilize immutability.
 
 Looking back at the example, one can notice that inlining is essentially
 beta-reduction, since the given code can be expressed with just functional
-abstraction and function application, like so:
+abstraction and function application, as follows:
 
 \begin{lstlisting}
 (\f -> f 1) (\x -> 5)
@@ -84,7 +87,7 @@ occurrences.
 %
 
 The strategy for proving the correctness of the inlining pass follow
-the same pattern as described in the section \ref{background:purecake}.
+the same pattern as described in Section \ref{background:purecake}.
 
 The steps are as follows:
 
@@ -115,40 +118,64 @@ Provided of course that the inlined expression doesn't capture any unwanted
 variables. This proof can be expressed elegantly thanks to the expression equivalence
 relation defined for PureLang.
 
-The base relation for single variable inlining is \lstinline{subst_relv x t u}, an
-inductive relation representing the possibility to inline \lstinline{x} for
-\lstinline{v} in \lstinline{t} to get \lstinline{u}.
+The base relation for single variable inlining is \lstinline{subst_relv x t u},
+an inductive relation representing the possibility to inline \lstinline{x} for
+\lstinline{v} in \lstinline{t} to get \lstinline{u}. The definition of this
+relation is shown in Figure \ref{fig:single_inlining_relation}.
 
-\begin{definition}
+\begin{figure}
 %
-Single expression inlining relation
+  \begin{definition}
+    \lstinline{subst_rel_Var}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.subst_rel_Var}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{subst_rel_refl}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.subst_rel_refl}
+    \end{holthmenv}
+  \end{definition}
+  
+  \begin{definition}
+    \lstinline{subst_rel_App}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.subst_rel_App}
+    \end{holthmenv}
+  \end{definition}
+  
+  \begin{definition}
+    \lstinline{subst_rel_Lam}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.subst_rel_Lam}
+    \end{holthmenv}
+  \end{definition}
+  
+  \begin{definition}
+    \lstinline{subst_rel_Letrec}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.subst_rel_Letrec}
+    \end{holthmenv}
+  \end{definition}
+  
+  \begin{definition}
+    \lstinline{subst_rel_Prim}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.subst_rel_Prim}
+    \end{holthmenv}
+  \end{definition}
 %
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.subst_rel_Var}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.subst_rel_refl}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.subst_rel_App}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.subst_rel_Lam}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.subst_rel_Letrec}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.subst_rel_Prim}
-\end{holthmenvl}
-%
-\end{definition}
+\caption{Single inlining relation}
+\label{fig:single_inlining_relation}
+\end{figure}
 
 The informal meaning of this inductive relation is that if an instance of
 \lstinline{subst_rel v x t u} can be constructed, it means that an
 expression \lstinline{x} under the name of \lstinline{v} can be inlined in
 \lstinline{t} and get \lstinline{u} as a result. The most important constructor
-is the \lstinline{Var} one, which expresses the operation of inlining the given
+is \lstinline{subst_rel_Var}, which expresses the operation of inlining the given
 expression. The other constructors essentially just allow for performing
 inlining deeper inside the tree. Considering the example:
 
@@ -170,9 +197,9 @@ case:
 %
 subst_rel_App
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.subst_rel_App}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -193,9 +220,9 @@ reflexivity of \lstinline{subst_rel} to prove it.
 %
 subst_rel_refl
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.subst_rel_refl}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -207,9 +234,9 @@ performed. Here the \lstinline{Var} constructor is used
 %
 subst_rel_Var
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.subst_rel_Var}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -218,7 +245,7 @@ Its definition is quite simple, it just states that when inlining variable
 expression it binds. Using this rule concludes creating the desired relation
 instance.
 
-The derivation tree for this relation instance looks like so:
+The derivation tree for this relation instance is as follows:
 
 \begin{prooftree}[small]
 % 1st branch
@@ -243,9 +270,9 @@ formulated.
 %
 Equivalence of inlining a single definition for \lstinline{subst_rel} relation
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.subst_rel_IMP_exp_eq_specialized}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -280,32 +307,55 @@ It is not possible to define \lstinline{subst_rel} for this expression, even tho
 a nested inlining can be performed.
 
 That is why another relation is defined, one that doesn't depend on the inlined
-data.
+data. This relation is shown in Figure \ref{fig:deep_single_inlining_relation}.
 
-\begin{definition}
+\begin{figure}
 %
-Deep single expression inlining relation
+  \begin{definition}
+    \lstinline{deep_subst_rel_Let}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.deep_subst_rel_Let}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{deep_subst_rel_refl}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.deep_subst_rel_refl}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{deep_subst_rel_App}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.deep_subst_rel_App}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{deep_subst_rel_Lam}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.deep_subst_rel_Lam}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{deep_subst_rel_Letrec}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.deep_subst_rel_Letrec}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{deep_subst_rel_Prim}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.deep_subst_rel_Prim}
+    \end{holthmenv}
+  \end{definition}
 %
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.deep_subst_rel_Let}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.deep_subst_rel_refl}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.deep_subst_rel_App}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.deep_subst_rel_Lam}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.deep_subst_rel_Letrec}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.deep_subst_rel_Prim}
-\end{holthmenvl}
-%
-\end{definition}
+\caption{Deep single inlining relation}
+\label{fig:deep_single_inlining_relation}
+\end{figure}
 
 The informal meaning of this relation is that: for any \lstinline{t, u} it is
 possible to inline any single variable in \lstinline{t} to get \lstinline{u}.
@@ -324,9 +374,9 @@ can be constructed, first using the \lstinline{App} rule:
 %
 deep_subst_rel_App
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.deep_subst_rel_App}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -346,9 +396,9 @@ the other hand uses the \lstinline{Let} case
 %
 deep_subst_rel_Let
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.deep_subst_rel_Let}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -363,7 +413,7 @@ constructed is
 which is
 the same instance that was constructed for the previous example.
 
-The derivation for this example relation looks like so:
+The derivation for this example relation is as follows:
 
 \begin{prooftree}[small]
 % subst_rel_case
@@ -414,9 +464,9 @@ Using this new relation, a more general theorem was formulated and proved.
 %
 Equivalence of inlining any single definition for \lstinline{deep_subst_rel} relation
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.deep_subst_rel_IMP_exp_eq_specialized}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -439,44 +489,84 @@ An efficient implementation of an inlining pass can inline multiple expressions
 at the same time. Instead of possibly inlining a single expression, while
 traversing an AST, the algorithm should collect all declarations and be able to
 inline every one of them in one go. A new relation has been defined, this time
-indicating the possible inlining of multiple declarations.
+indicating the possible inlining of multiple declarations. The full definition
+of this relation is shown in Figure \ref{fig:multiinlining_relation}.
 
-\begin{definition}
+\begin{figure}
 %
-Multi-inlining relation
+  \begin{definition}
+  \lstinline{list_subst_rel_Let}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_Let}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_LetrecInline}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_LetrecInline}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_Var}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_Var}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_VarSimp}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_VarSimp}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_LetrecIntro}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_LetrecIntro}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_refl}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_refl}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_Prim}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_Prim}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_App}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_App}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_Lam}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_Lam}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{list_subst_rel_Letrec}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.list_subst_rel_Letrec}
+    \end{holthmenv}
+  \end{definition}
 %
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_Let}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_LetrecInline}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_Var}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_VarSimp}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_LetrecIntro}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_refl}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_Prim}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_App}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_Lam}
-\end{holthmenvl}
-\begin{holthmenvl}
-  \HOLthm[width=80]{pure_inline.list_subst_rel_Letrec}
-\end{holthmenvl}
-%
-\end{definition}
+\caption{Multi-inlining relation}
+\label{fig:multiinlining_relation}
+\end{figure}
 
 For any \lstinline{l, t, u}, \lstinline{list_subst_rel l t u} expresses that
 declarations in \lstinline{l} can be inlined in \lstinline{t} possibly multiple times to
@@ -526,9 +616,9 @@ construct this relation one has to first use the \lstinline{Let} case:
 %
 list_subst_rel_Let
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.list_subst_rel_Let}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -565,13 +655,13 @@ only requires the evidence that the variable is in the list of declarations:
 %
 list_subst_rel_VarSimp
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.list_subst_rel_VarSimp}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
-The derivation tree for this relation instance looks like so:
+The derivation tree for this relation instance is as follows:
 
 \begin{prooftree}[small]
 % Var case
@@ -633,9 +723,9 @@ formulated and proved:
 %
 Equivalence of inlining multiple definitions for \lstinline{list_subst_rel} relation
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.list_subst_rel_IMP_exp_eq_lemma_specialized}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -658,9 +748,9 @@ list of declarations in a closed expression.
 %
 Equivalence of inlining for \lstinline{list_subst_rel} relation
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline.list_subst_rel_IMP_exp_eq_specialized}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -674,17 +764,24 @@ from the previous one.
 
 The implementation of the inlining pass follows the same pattern as the
 multi-inlining relation. It transforms the expression based on the given
-declarations. The implementation is as follows:
+declarations. The implementation is shown in Figure \ref{fig:inline_function_implementation}.
 
+\begin{figure}
+%
 \begin{definition}
 %
 \lstinline{inline} function implementation
 %
 \begin{holthmenv}
-  \HOLthm[def]{pure_inline_cexp.inline_def}
+  \HOLthm[def,width=85]{pure_inline_cexp.inline_def}
 \end{holthmenv}
 %
 \end{definition}
+%
+\caption{\lstinline{inline} function implementation}
+\label{fig:inline_function_implementation}
+\end{figure}
+
 
 The function takes:
 
@@ -751,9 +848,9 @@ of the theorem is as follows:
 \begin{theorem}
 \label{theorem:inline_cexp_list_subst_rel_spec}
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline_cexpProof.inline_cexp_list_subst_rel_spec}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 
@@ -779,9 +876,9 @@ theorem and the equivalence theorem for the relation.
 \begin{theorem}
 \label{theorem:inline_all_thm}
 %
-\begin{holthmenvl}
+\begin{holthmenv}
   \HOLthm[width=80]{pure_inline_cexpProof.inline_all_thm}
-\end{holthmenvl}
+\end{holthmenv}
 %
 \end{theorem}
 

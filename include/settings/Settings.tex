@@ -12,6 +12,12 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 
+% font from ACM
+\usepackage[T1]{fontenc}
+\usepackage[tt=false, type1=true]{libertine}
+\usepackage[varqu]{zi4}
+\usepackage{txfonts}
+
 % BASIC SETTINGS
 \usepackage{moreverb}								% List settings
 \usepackage{textcomp}								% Fonts, symbols etc.
@@ -98,16 +104,19 @@
 % \newcommand{\inc}[1]{\[\texttt{\lstinline{#1}}\]}
 
 % New unicode chars
-\newunicodechar{≅}{\cong}
+% \newunicodechar{≅}{\cong}
+\newunicodechar{≅}{\ensuremath{\cong}}
 
 % OPTIONAL SETTINGS (DELETE OR COMMENT TO SUPRESS)
 
 % Disable automatic indentation (equal to using \noindent)
 \setlength{\parindent}{0em}
 
+\setlength{\mathindent}{0pt}
+
 % HOL settings
 \renewcommand{\HOLTokenTurnstile}{\ensuremath{\vdash\rule{-0.19em}{0em}}}
-\renewcommand{\HOLConst}[1]{\textsf{#1}}
+% \renewcommand{\HOLConst}[1]{\textsf{#1}}
 \renewcommand{\HOLFieldName}[1]{\textsf{#1}}
 \renewcommand{\HOLSymConst}[1]{\HOLConst{#1}}
 \renewcommand{\HOLTyOp}[1]{\HOLConst{#1}}
@@ -129,6 +138,7 @@
 \newcommand{\expdiv}[0]{\Uparrow_{\mathsf{exp}}}
 
 \NewEnviron{holthmenv}{%
+	\fontfamily{cmr}\selectfont
   \[
   \scalebox{1.0}{\begin{array}[t]{l}
   \BODY
@@ -144,6 +154,8 @@
 	\begin{equation}\begin{aligned}
 		\scalebox{1.0}{\begin{array}[t]{l}\BODY\end{array}}
 	\end{aligned}\end{equation}}
+
+\hyphenation{comp-cert}
 
 % Caption settings (aligned left with bold name)
 \usepackage[labelfont=bf, textfont=normal,

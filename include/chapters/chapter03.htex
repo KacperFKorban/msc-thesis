@@ -95,4 +95,73 @@ allows for it to be proven correct.
 \label{verified_specialization:implementation}
 %
 
-\todoo{Add implementation details once they are implemented}
+The specialization is not implemented as a separate pass. Instead, it is only a
+transformation function that is used by the inlining pass. The function is
+defined as follows:
+
+\begin{definition}
+%
+\begin{holthmenv}
+  \HOLthm[def]{pure_letrec_spec_cexp.spec_def}
+\end{holthmenv}
+%
+\end{definition}
+
+This function takes:
+\begin{enumerate}
+  \item The \lstinline{f} name of the \lstinline{letrec} to specialize.
+  \item Arguments \lstinline{args}, the function is called with.
+  \item The body of the \lstinline{letrec}.
+\end{enumerate}
+
+The output of this function is the specialized version of the provided
+\lstinline{letrec} body.
+
+The specialization can only be performed on \lstinline{letrec}s with bodies as
+top-level lambda abstractions, otherwise there are no arguments to specialize.
+The function works in the following steps:
+\begin{enumerate}
+  \item It uses \lstinline{const_call_args} to find for all "constant arguments"
+  -- arguments of \lstinline{f} that are always only called with the references
+  to themselves in recursive calls to \lstinline{f}.
+  \item It then computes a lookup for all "constant arguments" and their
+  appropriate values in \lstinline{args}.
+  \item If the lookup is empty, no specialization is performed. Otherwise, it
+  performs substitution of the constant arguments with their values inside of
+  the provided \lstinline{letrec} body.
+\end{enumerate}
+
+Let's consider the following example:
+
+\begin{lstlisting}
+letrec sum_map_to = \n -> \f -> case n of
+  0 -> 0
+  n -> f n + sum_map_to (n - 1) f
+in
+  sum_map_to 10 (\x -> x + 1)
+\end{lstlisting}
+
+The specialization algorithm will:
+\begin{enumerate}
+  \item Search the body of \lstinline{sum_map_to} for constant arguments. In
+  this case, it will find that \lstinline{f} is a "constant argument" and n is
+  not. This is because \lstinline{f} is only called with itself in recursive
+  calls, whereas \lstinline{n} is called with \lstinline{f} and \lstinline{n - 1}.
+  \item It will then compute a lookup for the constant arguments. In this case,
+  it will be \lstinline{[f -> (\x -> x + 1)]}.
+  \item Finally, it will substitute the constant arguments with their values.
+\end{enumerate}
+
+When called within the inlining pass, the result will be:
+
+\begin{lstlisting}
+letrec sum_map_to = \n -> \f -> case n of
+  0 -> 0
+  n -> f n + sum_map_to (n - 1) f
+in
+  letrec sum_map_to = \n -> \f -> case n of
+    0 -> 0
+    n -> f n + sum_map_to (n - 1) (\x -> x + 1)
+  in 
+    sum_map_to 10 (\x -> x + 1)
+\end{lstlisting}

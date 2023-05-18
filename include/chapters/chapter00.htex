@@ -76,7 +76,7 @@ let x = foo 1
 in bar x
 \end{lstlisting}
 
-The body of x can be copied and inserted into its use site, like so:
+The body of x can be copied and inserted into its use site as follows:
 
 \begin{lstlisting}
 let x = foo 1

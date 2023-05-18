@@ -10,8 +10,8 @@ include/chapters/chapter00.tex: include/chapters/chapter00.htex munge.exe overri
 include/chapters/chapter01.tex: include/chapters/chapter01.htex munge.exe overrides
 	./munge.exe -w60 -m';' overrides < $< > $@
 
-# include/chapters/chapter02.tex: include/chapters/chapter02.htex munge.exe overrides
-#	./munge.exe -w60 -m';' overrides < $< > $@
+include/chapters/chapter02.tex: include/chapters/chapter02.htex munge.exe overrides
+	./munge.exe -w60 -m';' overrides < $< > $@
 
 include/chapters/chapter03.tex: include/chapters/chapter03.htex munge.exe overrides
 	./munge.exe -w60 -m';' overrides < $< > $@
@@ -53,6 +53,7 @@ HEAPDEPS = $(CAKEMLDIR)/misc/miscTheory.uo \
 		 $(PUREDIR)/meta-theory/pure_inlineTheory.uo \
 		 $(PUREDIR)/language/pure_expTheory.uo \
 		 $(PUREDIR)/compiler/backend/passes/pure_inline_cexpTheory.uo \
+		 $(PUREDIR)/compiler/backend/passes/pure_letrec_spec_cexpTheory.uo \
 		 $(PUREDIR)/compiler/backend/passes/proofs/pure_inline_cexpProofTheory.uo \
 		 $(PUREDIR)/compiler/backend/languages/pure_cexpTheory.uo
 

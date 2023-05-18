@@ -3,6 +3,7 @@ Loading /home/kpi/cakeml/misc/preamble.uo
 Loading /home/kpi/pure/meta-theory/pure_inlineTheory.uo
 Loading /home/kpi/pure/language/pure_expTheory.uo
 Loading /home/kpi/pure/compiler/backend/passes/pure_inline_cexpTheory.uo
+Loading /home/kpi/pure/compiler/backend/passes/pure_letrec_spec_cexpTheory.uo
 Loading /home/kpi/pure/compiler/backend/passes/proofs/pure_inline_cexpProofTheory.uo
 Loading /home/kpi/pure/compiler/backend/languages/pure_cexpTheory.uo
 Sharing common data

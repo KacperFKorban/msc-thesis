@@ -48,7 +48,77 @@ relation, thereby providing a thorough proof of the full inlining pass.
 Together those two theorems prove that the inlining pass does not alter the semantics
 of the input program.
 
-\section{Examples and Benchmarks}
-\label{results:benchmarks}
+\section{Examples}
+\label{results:examles}
 
-\todoo{Possible benchmark results.}
+To showcase the capabilities of the inlining pass, a few examples are provided.
+These examples were transformed using the partially unverified pass. This version
+of the pass is unverified since it uses both the specialization
+transformation and the freshening function to inline inside the inserted
+expressions.
+
+Example 1 -- simple inlining of a constant:
+
+\begin{lstlisting}
+let x = 7
+in (\m -> x)
+\end{lstlisting}
+
+The expression after inlining:
+
+\begin{lstlisting}
+let x = 7
+in (\m -> 7)
+\end{lstlisting}
+
+Example 2 -- transitively inlining let bindings:
+
+\begin{lstlisting}
+let f = (\x -> x + 5)
+in let y = f 1
+in 1 + y
+\end{lstlisting}
+
+The expression after inlining:
+
+\begin{lstlisting}
+let f = (lam (x) (+ x (int 5)))
+in let y = (let x = 1 in 1 + 5)
+in 1 + (let x = 1 in 1 + 5)
+\end{lstlisting}
+
+A thing of note in the above example is that the inlining pass paved the way for
+other optimizations to be applied. In this case, dead code elimination can
+remove both bindings for \lstinline{x}. This would allow for the constant value
+to be computed at compile time by yet another optimization pass.
+
+Example 3 -- specialization:
+
+\begin{lstlisting}
+letrec map = \f -> \lst -> case lst of
+  [] -> []
+  (x:xs) -> f x : map f xs
+in
+  let foo = (\x -> x + 1) 
+  in map foo
+\end{lstlisting}
+
+The expression after inlining:
+
+\begin{lstlisting}
+letrec map = \f -> \lst -> case lst of
+  [] -> []
+  (x:xs) -> f x : map f xs
+in
+  let foo = (\x -> x + 1) 
+  in 
+    letrec map = \f -> \lst -> case lst of
+      [] -> []
+      (x:xs) -> foo x : map foo xs
+    in map foo
+\end{lstlisting}
+
+Note that the specialization algorithm only specializes in the definition of
+\lstinline{map}, without removing the original argument. This optimization of
+removing unused bindings can be performed by another optimization pass, similar
+to dead code elimination.
