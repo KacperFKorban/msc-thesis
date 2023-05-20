@@ -30,6 +30,8 @@ currently active proofs. They also make the process of developing proofs more
 interactive, by allowing the developer to incrementally apply tactics to the
 sequent.
 
+
+
 % Should I go into detail about using HOL? It shouldn't be necessary :thinking:
 
 \section{PureCake}

@@ -1,35 +1,11 @@
-change the example
-foo 1 -> y + 1
-bar -> 1 + x
-
-(to make it seem that other optimization can be triggered)
-
-let f = (\x -> x + 5)
-in (\y -> 1 + y) (f 1)
-
-==>
-
-let f = (\x -> x + 5)
-in (\y -> 1 + y) ((\x -> x + 5) 1)
-
-----------------
-
-let f = (\x -> x + 5)
-in let y = f 1
-in 1 + y
-
-==>
-
-let f = (\x -> x + 5)
-in let y = (\x -> x + 5) 1
-in 1 + (\x -> x + 5) 1
-
---------------------
-
-let f = (\x -> x + 5)
-in f 1
-
-==>
-
-let f = (\x -> x + 5)
-in f 1
+TODO:
+- Expand the thesis to make it longer and more comprehensive overall.
+- Provide a definition for LIST_REL in Figure 3.1.
+- Consider presenting the derivation tree as a bullet point list, including the steps of the proof and relevant rules used.
+- Add more explanation and text to the proof in the theorem proved by induction on subst_rel. Describe the interesting cases, crucial properties, and relevant helper definitions/lemmas.
+- Similarly, provide a more detailed explanation of the significance of Theorem 7.
+- Include explanations of exp_eq and congruences for it in the Background chapter, under PureCake, ensuring it is understandable to outsiders.
+- Split Chapter 3 into two chapters: "Verified Inlining at the Abstract Level" and "Verified Implementation of Inlining." Move content from Section 3.5 onwards to the new chapter.
+- In the new implementation chapter, provide more information about the proofs.
+- Expand Chapter 5 (Results chapter).
+- Review and revise the final chapter to make it less "bullet point"-like and more substantial.
