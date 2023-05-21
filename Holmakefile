@@ -22,6 +22,9 @@ include/chapters/chapter04.tex: include/chapters/chapter04.htex munge.exe overri
 include/chapters/chapter05.tex: include/chapters/chapter05.htex munge.exe overrides
 	./munge.exe -w60 -m';' overrides < $< > $@
 
+include/chapters/chapter06.tex: include/chapters/chapter06.htex munge.exe overrides
+	./munge.exe -w60 -m';' overrides < $< > $@
+
 # Add all of them as dependencies to this thing
 report.pdf: report.tex report.bib holtexbasic.sty \
 	            include/chapters/chapter00.tex \
@@ -29,7 +32,8 @@ report.pdf: report.tex report.bib holtexbasic.sty \
 							include/chapters/chapter02.tex \
 							include/chapters/chapter03.tex \
 							include/chapters/chapter04.tex \
-							include/chapters/chapter05.tex
+							include/chapters/chapter05.tex \
+							include/chapters/chapter06.tex
 	latexmk --shell-escape --pdf report
 
 REPORT_FILES = report.pdf report.aux \

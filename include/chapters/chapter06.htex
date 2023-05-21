@@ -1,0 +1,41 @@
+\chapter{Conclusions}
+\label{conclusions}
+%
+
+This chapter provides a top-level summary of the completed work as well as thoughts on related and future work.
+
+\section{Summary of the completed work}
+\label{conclusions:summary_of_the_completed_work}
+%
+
+As a result of this project, several significant milestones were accomplished:
+
+Firstly, an inlining pass for PureCake was implemented. The versatility of this pass lies in it being heuristic-agnostic, allowing for the application of any inlining strategy and thus offering considerable scope for future optimization. This implementation also accommodates the use of specialization making it easy to incorporate into the pass.
+
+Additionally, a correctness proof for the inlining transformation, which is independent of the implementation, was defined and proven correct. This proof shows that any inlining pass that satisfies the same transformation schema preserves the semantics of the input program. It applies universally to any inlining pass implementation that satisfies the same transformation schema. This approach is advantageous as it allows for the proof to remain relevant and reusable even if the implementation changes.
+
+A noteworthy achievement was the successful proof of a correctness theorem for the specific inlining pass implementation. This result gives the guarantee that the implementation is safe to use, as it does not alter the semantics of the input program.
+
+Lastly, the project saw the successful development of an unverified function specialization pass. The implementation and correctness proof of the inlining pass readily accommodates the use of this function specialization transformation. Furthermore, the verification methodology employed in this project paves the way for the function specialization pass to be proven.
+
+\section{Related Work}
+\label{conclusions:related_work}
+%
+
+Verified compilation has been getting more and more traction recently, so there are quite a few verified optimizing compilers out there. The most famous of all CompCert \cite{compcert} implements multiple optimization passes, one of which is function inlining. However, the main difference between CompCert's function inlining is that it is done for an imperative language, that only supports top-level function declarations. 
+
+Another well-known verified compiler is CakeML, which is a verified compiler for an ML-like, impure, eagerly evaluated, functional language. PureCake uses CakeML as a back-end, to generate machine code. CakeML being an optimizing compiler has its implementation of function inlining \cite{cakemlinlining}. Though the main difference with this work is that CakeML is still an impure and eagerly-evaluated language.
+
+The research on the Pilsner compiler \cite{pilsner} also touches on topics relevant to this work. It is a compiler for an ML-like language that goes through a CPS-based intermediate language to an assembly-like target. Function inlining optimization is implemented for the intermediate language, because of that the inlining is limited to top-level functions.
+
+\section{Future Work}
+\label{conclusions:future_work}
+%
+
+Future work on this project includes the following:
+
+\begin{itemize}
+  \item The current implementation of inlining only uses a very simple heuristic. This should be changed to a more sophisticated one, preferably one inspired by the GHC compiler. This should also be accompanied by a more comprehensive set of benchmarks.
+  \item At the time of writing, the specialization pass is not verified. This should be done, to be able to introduce the whole inlining pass into the main compiler pipeline.
+  \item The biggest benefit of an inlining pass is that it allows for other optimization to be triggered. And so, the more optimizations on the PureLang level are implemented, the more benefit the inlining pass will bring.
+\end{itemize}

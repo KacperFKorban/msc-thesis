@@ -1,41 +1,29 @@
-\chapter{Verified Inlining}
-\label{verified_inlining}
+\chapter{Verified Inlining at the Abstract Level}
+\label{verified_inlining_at_the_abstract_level}
 %
 
-This chapter describes work done on the inlining optimization. It concentrates
-on the approach to proving the correctness of the inlining transformation as
-well as the correctness of the optimization. It shows three approaches for
-defining the correctness relation: a single inlining relation, a deep inlining
-relation and a multi-inlining relation. The correctness proof of the
-implementation is shown based on the final one.
+This chapter describes work done on the inlining optimization. It concentrates on the approach to proving the correctness of the inlining transformation on an abstract level. It shows three approaches for defining the correctness relation: a single inlining relation, a deep inlining relation and a multi-inlining relation.
 
 \section{Goal}
-\label{verified_inlining:goal}
+\label{verified_inlining_at_the_abstract_level:goal}
 %
 
-The core idea for the inlining optimization is noticing that in certain cases
-the execution of a program will be faster if the runtime didn't have to make an
-unnecessary jump to a function call. Considering the following example:
+The core idea for the inlining optimization is noticing that in certain cases the execution of a program will be faster if the runtime didn't have to make an unnecessary jump to a function call. Considering the following example:
 
 \begin{lstlisting}
 let f = (\x -> 5)
 in f 1
 \end{lstlisting}
 
-It can be easier to write code that uses multiple bindings, specifically ones
-that are referenced a single time. That is specifically the case with functional
-programming that utilize immutability.
+It can be easier to write code that uses multiple bindings, specifically ones that are referenced a single time. That is specifically the case with functional programming that utilize immutability.
 
-Looking back at the example, one can notice that inlining is essentially
-beta-reduction, since the given code can be expressed with just functional
-abstraction and function application, as follows:
+Looking back at the example, one can notice that inlining is essentially beta-reduction since the given code can be expressed with just functional abstraction and function application, as follows:
 
 \begin{lstlisting}
 (\f -> f 1) (\x -> 5)
 \end{lstlisting}
 
-Unfortunately, it is not always the case, that the compiler can perform this
-beta-reduction. When considering the following code snippet:
+Unfortunately, it is not always the case, that the compiler can perform this beta-reduction. When considering the following code snippet:
 
 \begin{lstlisting}
 let f = (\x -> y + 5)
@@ -44,84 +32,51 @@ in
   in f 1
 \end{lstlisting}
 
-It should be clear that even though f is only referenced once and looks like a prime
-candidate for inlining, performing the outer-most beta-reduction would
-change the semantics of the program. This example demonstrates the famous
-variable capture problem, where inlining f would change y from being a free
-variable to a variable bound in an inner scope.
+It should be clear that even though f is only referenced once and looks like a prime candidate for inlining, performing the outer-most beta-reduction would change the semantics of the program. This example demonstrates the famous variable capture problem, where inlining f would change y from being a free variable to a variable bound in an inner scope.
 
-Another important intricacy that differentiates inlining from simple
-beta-reduction is that for a single binding, it can be possible for it to inline
-one of its occurrences and not the other. And because of that inlining should not
-remove the bindings to the original function definition. One example that can
-illustrate this case is the following:
+Another important intricacy that differentiates inlining from simple beta-reduction is that for a single binding, it can be possible for it to inline one of its occurrences and not the other. And because of that inlining should not remove the bindings to the original function definition. One example that can illustrate this case is the following:
 
 \begin{lstlisting}
 let f = (\x -> 5)
 in f 1 : map f xs ++ map f ys
 \end{lstlisting}
 
-In this case, the compiler should only inline the references in which the function
-is immediately applied. Otherwise instead of one function definition,
-the compiler would have to generate two. So the ideal inlined code snippet for
-this example would look like the following:
+In this case, the compiler should only inline the references in which the function is immediately applied. Otherwise instead of one function definition, the compiler would have to generate two. So the ideal inlined code snippet for this example would look like the following:
 
 \begin{lstlisting}
 let f = (\x -> 5)
 in (\x -> 5) 1 : map f xs ++ map f ys
 \end{lstlisting}
 
-Of course, if all references to a variable get inlined, the original
-declaration will become unused. In that case, a different optimization pass
-should be responsible for that -- dead code elimination pass.
+Of course, if all references to a variable get inlined, the original declaration will become unused. In that case, a different optimization pass should be responsible for that -- dead code elimination pass.
 
-To summarise, inlining is a crucial optimization technique in functional
-programming that can significantly enhance the execution speed of a program by
-reducing unnecessary function calls. However, the process isn't as
-straightforward as it might appear due to complexities like the variable capture
-problem and the fact that a single binding can't always be inlined in all its
-occurrences.
+To summarise, inlining is a crucial optimization technique in functional programming that can significantly enhance the execution speed of a program by reducing unnecessary function calls. However, the process isn't as straightforward as it might appear due to complexities like the variable capture problem and the fact that a single binding can't always be inlined in all its occurrences.
 
 \section{Proof strategy}
-\label{verified_inlining:proof_strategy}
+\label{verified_inlining_at_the_abstract_level:proof_strategy}
 %
 
-The strategy for proving the correctness of the inlining pass follow
-the same pattern as described in Section \ref{background:purecake}.
+The strategy for proving the correctness of the inlining pass follows the same pattern as described in Section \ref{background:purecake}.
 
 The steps are as follows:
 
 \begin{enumerate}
-  \item Define a relation \lstinline{subst_rel} that relates an expression \lstinline{e} with every
-  possible result of inlining variables in \lstinline{e}.
-  \item Prove that for every \lstinline{e1} and \lstinline{e2}, if
-  \lstinline{subst_rel e1 e2} holds, then \lstinline{e1} is equivalent to
-  \lstinline{e2}.
+  \item Define a relation \lstinline{subst_rel} that relates an expression \lstinline{e} with every possible result of inlining variables in \lstinline{e}.
+  \item Prove that for every \lstinline{e1} and \lstinline{e2}, if \lstinline{subst_rel e1 e2} holds, then \lstinline{e1} is equivalent to \lstinline{e2}.
   \item Write the \lstinline{inline} function that implements the inlining pass.
-  \item Prove that for every \lstinline{e} the result of \lstinline{inline e}
-  satisfies the relation \lstinline{subst_rel e (inline e)}.
-  \item Use the previous theorem to prove that for every \lstinline{e} the
-  result of \lstinline{inline e} is equivalent to \lstinline{e}.
+  \item Prove that for every \lstinline{e} the result of \lstinline{inline e} satisfies the relation \lstinline{subst_rel e (inline e)}.
+  \item Use the previous theorem to prove that for every \lstinline{e} the result of \lstinline{inline e} is equivalent to \lstinline{e}.
 \end{enumerate}
 
-The next sections show alternative definitions of the \lstinline{subst_rel} relation
-that have been verified. It is followed by a description of the
-implemented inlining pass and the proof of its correctness.
+The next sections show alternative definitions of the \lstinline{subst_rel} relation that have been defined and verified to preserve equivalence.
 
 \section{Single Inlining Relation}
-\label{verified_inlining:single_inlining_relation}
+\label{verified_inlining_at_the_abstract_level:single_inlining_relation}
 %
 
-The first part of proving the correctness of inlining is, showing that the code
-after inlining a single variable is equivalent to the one before inlining.
-Provided of course that the inlined expression doesn't capture any unwanted
-variables. This proof can be expressed elegantly thanks to the expression equivalence
-relation defined for PureLang.
+The first part of proving the correctness of inlining is, showing that the code after inlining a single variable is equivalent to the one before inlining. Provided of course that the inlined expression doesn't capture any unwanted variables. This proof can be expressed elegantly thanks to the expression equivalence relation defined for PureLang.
 
-The base relation for single variable inlining is \lstinline{subst_relv x t u},
-an inductive relation representing the possibility to inline \lstinline{x} for
-\lstinline{v} in \lstinline{t} to get \lstinline{u}. The definition of this
-relation is shown in Figure \ref{fig:single_inlining_relation}.
+The base relation for single variable inlining is \lstinline{subst_relv x t u}, an inductive relation representing the possibility to inline \lstinline{x} for \lstinline{v} in \lstinline{t} to get \lstinline{u}. The definition of this relation is shown in Figure \ref{fig:single_inlining_relation}.
 
 \begin{figure}
 %
@@ -171,13 +126,7 @@ relation is shown in Figure \ref{fig:single_inlining_relation}.
 \label{fig:single_inlining_relation}
 \end{figure}
 
-The informal meaning of this inductive relation is that if an instance of
-\lstinline{subst_rel v x t u} can be constructed, it means that an
-expression \lstinline{x} under the name of \lstinline{v} can be inlined in
-\lstinline{t} and get \lstinline{u} as a result. The most important constructor
-is \lstinline{subst_rel_Var}, which expresses the operation of inlining the given
-expression. The other constructors essentially just allow for performing
-inlining deeper inside the tree. Considering the example:
+The informal meaning of this inductive relation is that if an instance of \lstinline{subst_rel v x t u} can be constructed, it means that an expression \lstinline{x} under the name of \lstinline{v} can be inlined in \lstinline{t} and get \lstinline{u} as a result. The most important constructor is \lstinline{subst_rel_Var}, which expresses the operation of inlining the given expression. The other constructors essentially just allow for performing inlining deeper inside the tree. Considering the example:
 
 \begin{lstlisting}
 let f = (\x -> 5)
@@ -188,14 +137,12 @@ Mixing concrete and abstract syntax to make the code easier to read. The followi
 \begin{lstlisting}[frame=none]
 subst_rel f (\x -> 5) (f 1) ((\x -> 5) 1)
 \end{lstlisting}
-To do so, the only constructors needed are the \lstinline{refl}, \lstinline{App} and \lstinline{Var} ones. More
-specifically, to construct this relation one has to first use the \lstinline{App}
-case:
+To do so, the only constructors needed are the \lstinline{refl}, \lstinline{App} and \lstinline{Var} ones. More specifically, to construct this relation one has to first use the \lstinline{App} case:
 
 \begin{theorem}
 \label{theorem:subst_rel_App}
 %
-subst_rel_App
+\lstinline{subst_rel_App}
 %
 \begin{holthmenv}
   \HOLthm[width=80]{pure_inline.subst_rel_App}
@@ -211,14 +158,12 @@ and
 \begin{lstlisting}[frame=none]
 subst_rel f (\x -> 5) 1 1
 \end{lstlisting}
-i.e. relations that show that the same substitution can be performed in both the
-function and the argument. The latter relation is trivial since we can just use
-reflexivity of \lstinline{subst_rel} to prove it.
+i.e. relations that show that the same substitution can be performed in both the function and the argument. The latter relation is trivial since we can just use reflexivity of \lstinline{subst_rel} to prove it.
 
 \begin{theorem}
 \label{theorem:subst_rel_refl}
 %
-subst_rel_refl
+\lstinline{subst_rel_refl}
 %
 \begin{holthmenv}
   \HOLthm[width=80]{pure_inline.subst_rel_refl}
@@ -226,13 +171,12 @@ subst_rel_refl
 %
 \end{theorem}
 
-The former is an interesting case because it's the one where inlining is
-performed. Here the \lstinline{Var} constructor is used
+The former is an interesting case because it's the one where inlining is performed. Here the \lstinline{Var} constructor is used
 
 \begin{theorem}
 \label{theorem:subst_rel_Var}
 %
-subst_rel_Var
+\lstinline{subst_rel_Var}
 %
 \begin{holthmenv}
   \HOLthm[width=80]{pure_inline.subst_rel_Var}
@@ -240,30 +184,38 @@ subst_rel_Var
 %
 \end{theorem}
 
-Its definition is quite simple, it just states that when inlining variable
-\lstinline{v} the reference to \lstinline{v} can be inlined i.e. replaced by the
-expression it binds. Using this rule concludes creating the desired relation
-instance.
+Its definition is quite simple, it just states that when inlining variable \lstinline{v} the reference to \lstinline{v} can be inlined i.e. replaced by the expression it binds. Using this rule concludes creating the desired relation instance.
 
 The derivation tree for this relation instance is as follows:
 
 \begin{prooftree}[small]
 % 1st branch
   \infer0[subst_rel_Var]{
-    subst_rel f (\textbackslash x -> 5) f (\textbackslash x -> 5)
+    \begin{tabular}{l}
+      subst_rel \\
+        f (\textbackslash x -> 5) \\
+        f (\textbackslash x -> 5)
+    \end{tabular}
   }
 % 2nd branch
   \infer0[subst_rel_refl]{
-    subst_rel f (\textbackslash x -> 5) 1 1
+    \begin{tabular}{l}
+      subst_rel \\
+        f (\textbackslash x -> 5) \\
+        1 1
+    \end{tabular}
   }
 % Conclusion
   \infer2[subst_rel_App]{
-    subst_rel f (\textbackslash x -> 5) (f 1) ((\textbackslash x -> 5) 1)
+    \begin{tabular}{l}
+      subst_rel \\
+        f (\textbackslash x -> 5) \\
+        (f 1) (\textbackslash x -> 5) 1
+    \end{tabular}
   }
 \end{prooftree}
 
-Using this relation, the core of a single inlining of a specific expression is
-formulated.
+Using this relation, the core of a single inlining of a specific expression is formulated.
 
 \begin{theorem}
 \label{theorem:subst_rel_IMP_exp_eq_specialized}
@@ -276,25 +228,90 @@ Equivalence of inlining a single definition for \lstinline{subst_rel} relation
 %
 \end{theorem}
 
-That is for any \lstinline{v, x, t, u}, if \lstinline{x} can be inlined for
-\lstinline{v} in \lstinline{t} to get \lstinline{u}, then \lstinline{Let v x t} is equivalent to
-\lstinline{Let v x u}. Worth noticing is that this is specifically true for any
-\lstinline{t, u} where \lstinline{t == u}, which essentially means that this theorem
-shows that the equivalence is true whenever inlining can be performed and not
-necessarily have to be performed.
+That is for any \lstinline{v, x, t, u}, if \lstinline{x} can be inlined for \lstinline{v} in \lstinline{t} to get \lstinline{u}, then \lstinline{Let v x t} is equivalent to \lstinline{Let v x u}. Worth noticing is that this is specifically true for any \lstinline{t, u} where \lstinline{t == u}, which essentially means that this theorem shows that the equivalence is true whenever inlining can be performed and does not necessarily have to be performed.
 
-This theorem is proved by induction on \lstinline{subst_rel} and with the usage of
-congruence rules for most constructors of \lstinline{exp}.
+The proof of this theorem is quite long and constitutes a big part of the work on this project. The following is a brief explanation of the proof.
+
+The whole proof was done by induction on the \lstinline{subst_rel} relation. The strategy used in most non-trivial cases was to first push down the \lstinline{Let} constructor into every branch of the expression tree. This was done so that the subtrees will match the inductive hypotheses. Then use the congruence rule for that type of expression to reduce the proof case to having to prove the equivalence of said subtrees. Finally, use the induction hypothesis to prove the equivalence of the subtrees. More specifically, for the \lstinline{App} case, the proof is as follows. The sequent for the case looks like the following.
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+0.  subst_rel v x t u
+1.  v (*\nin*) freevars x (*\imp*) Let v x t (*\expeq*) Let v x u
+2.  subst_rel v x t' u'
+3.  v (*\nin*) freevars x (*\imp*) Let v x t' (*\expeq*) Let v x u'
+4.  v (*\nin*) freevars x
+------------------------------------
+    Let v x (App t t') (*\expeq*) Let v x (App u u')
+\end{lstlisting}
+
+The first step is to push down the \lstinline{Let} constructor into every subtree of the \lstinline{App} constructor. This is done by using the following theorem:
+
+\begin{theorem}
+\label{theorem:Let_App_specialized}
+%
+\lstinline{Let_App}
+\begin{holthmenv}
+  \HOLthm[width=80]{pure_inline.Let_App_specialized}
+\end{holthmenv}
+%
+\end{theorem}
+
+After performing this step on both sides of the equivalence we get the following sequent:
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+0.  subst_rel v x t u
+1.  Let v x t (*\expeq*) Let v x u
+2.  subst_rel v x t' u'
+3.  Let v x t' (*\expeq*) Let v x u'
+4.  v (*\nin*) freevars x
+------------------------------------
+    App (Let v x t) (Let v x t') (*\expeq*) App (Let v x u) (Let v x u')
+\end{lstlisting}
+
+Now the congruence rule for \lstinline{App} can be used. This way the proof gets reduced to proving the equivalence of the subtrees.
+
+\begin{theorem}
+\label{theorem:exp_eq_App_cong_specialized}
+%
+\lstinline{exp_eq_App_cong} -- expression equivalence congruence theorem for \lstinline{App}
+\begin{holthmenv}
+  \HOLthm[width=80]{pure_inline.exp_eq_App_cong_specialized}
+\end{holthmenv}
+%
+\end{theorem}
+
+After using this theorem the sequent looks like the following:
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+0.  subst_rel v x t u
+1.  Let v x t (*\expeq*) Let v x u
+2.  subst_rel v x t' u'
+3.  Let v x t' (*\expeq*) Let v x u'
+4.  v (*\nin*) freevars x
+------------------------------------
+    Let v x t' (*\expeq*) Let v x u' (*$\land$*) Let v x t (*\expeq*) Let v x u
+\end{lstlisting}
+
+Both cases of the goal now follow immediately from the induction hypotheses. This concludes the proof of this case.
+
+Another interesting case that didn't follow the same approach was the \lstinline{Var} case. A different strategy was used for it, as it is the case that performs the inlining. There is no need to push down the \lstinline{Let} constructor in this case, since there are no subtrees. This denotes the edge case when a \lstinline{Let} has already been pushed to the leaf of the expression tree. Instead, a different lemma is proved:
+
+\begin{theorem}
+%
+\lstinline{Let_Var3} -- inlining a variable in a \lstinline{Let}
+\begin{holthmenv}
+  \HOLthm[width=80]{pure_inline.Let_Var3_specialized}
+\end{holthmenv}
+%
+\end{theorem}
+
+The proof of this lemma dives deeper into the evaluation of those expressions. It shows that the weak head evaluated forms of the expressions are equal. This together with the theorem shown before, \lstinline{eval_wh_IMP_exp_eq}, is enough to prove the \lstinline{Var} case.
 
 \subsection{Deep Single Inlining Relation}
-\label{verified_inlining:single_inlining_relation:optional_single_inlining_relation}
+\label{verified_inlining_at_the_abstract_level:single_inlining_relation:optional_single_inlining_relation}
 %
 
-One question that can come to mind when reading the statement of this theorem
-is: Why is there a \lstinline{Let} in the conclusion instead of just any expression?
-The reason for that is that the relation depends on the variable name and
-the expression that is being inlined. More specifically, considering a modified version
-of the example from before:
+One question that can come to mind when reading the statement of this theorem is: Why is there a \lstinline{Let} in the conclusion instead of just any expression? The reason for that is that the relation depends on the variable name and the expression that is being inlined. More specifically, considering a modified version of the example from before:
 
 \begin{lstlisting}
 g (
@@ -303,11 +320,9 @@ g (
 )
 \end{lstlisting}
 
-It is not possible to define \lstinline{subst_rel} for this expression, even though
-a nested inlining can be performed.
+It is not possible to define \lstinline{subst_rel} for this expression, even though nested inlining can be performed.
 
-That is why another relation is defined, one that doesn't depend on the inlined
-data. This relation is shown in Figure \ref{fig:deep_single_inlining_relation}.
+That is why another relation is defined, one that doesn't depend on the inlined data. This relation is shown in Figure \ref{fig:deep_single_inlining_relation}.
 
 \begin{figure}
 %
@@ -357,11 +372,9 @@ data. This relation is shown in Figure \ref{fig:deep_single_inlining_relation}.
 \label{fig:deep_single_inlining_relation}
 \end{figure}
 
-The informal meaning of this relation is that: for any \lstinline{t, u} it is
-possible to inline any single variable in \lstinline{t} to get \lstinline{u}.
+The informal meaning of this relation is that: for any \lstinline{t, u} it is possible to inline any single variable in \lstinline{t} to get \lstinline{u}.
 
-Using the new relation, it is possible to construct \lstinline{deep_subst_rel}
-instance for the modified example. Which means
+Using the new relation, it is possible to construct \lstinline{deep_subst_rel} instance for the modified example. Which means
 \begin{lstlisting}[frame=none]
 deep_subst_rel
   (g (let f = (\x -> 5) in f 1))
@@ -372,7 +385,7 @@ can be constructed, first using the \lstinline{App} rule:
 \begin{theorem}
 \label{theorem:deep_subst_rel_App}
 %
-deep_subst_rel_App
+\lstinline{deep_subst_rel_App}
 %
 \begin{holthmenv}
   \HOLthm[width=80]{pure_inline.deep_subst_rel_App}
@@ -380,21 +393,18 @@ deep_subst_rel_App
 %
 \end{theorem}
 
-It behaves just like a congruence over \lstinline{App}, which is almost the same as
-the corresponding theorem in \lstinline{subst_rel}. Similarly as with
-\lstinline{subst_rel}, it takes as assumptions \lstinline{deep_subst_rel g g} and
+It behaves just like a congruence over \lstinline{App}, which is almost the same as the corresponding theorem in \lstinline{subst_rel}. Similarly as with \lstinline{subst_rel}, it takes as assumptions \lstinline{deep_subst_rel g g} and
 \begin{lstlisting}[frame=none]
 deep_subst_rel
   (let f = (\x -> 5) in f 1)
   (let f = (\x -> 5) in (\x -> 5) 1)
 \end{lstlisting}
-This time the former is trivial since it uses reflexivity. The latter on
-the other hand uses the \lstinline{Let} case
+This time the former is trivial since it uses reflexivity. The latter on the other hand uses the \lstinline{Let} case
 
 \begin{theorem}
 \label{theorem:deep_subst_rel_Let}
 %
-deep_subst_rel_Let
+\lstinline{deep_subst_rel_Let}
 %
 \begin{holthmenv}
   \HOLthm[width=80]{pure_inline.deep_subst_rel_Let}
@@ -402,58 +412,58 @@ deep_subst_rel_Let
 %
 \end{theorem}
 
-This theorem looks very similar to the one proved before for the equivalence of
-\lstinline{Let} expressions based on \lstinline{subst_rel}. And so
-\lstinline{deep_subst_rel} reuses \lstinline{subst_rel} in this case, using it
-as an assumption. For this example the specific relation that needs to be
-constructed is
+This theorem looks very similar to the one proved before for the equivalence of \lstinline{Let} expressions based on \lstinline{subst_rel}. And so \lstinline{deep_subst_rel} reuses \lstinline{subst_rel} in this case, using it as an assumption. For this example the specific relation that needs to be constructed is
 \begin{lstlisting}[frame=none]
   subst_rel f (\x -> 5) (f 1) ((\x -> 5) 1)
 \end{lstlisting}
-which is
-the same instance that was constructed for the previous example.
+which is the same instance that was constructed for the previous example.
 
 The derivation for this example relation is as follows:
 
 \begin{prooftree}[small]
 % subst_rel_case
   \infer0[subst_rel_Var]{
-    \parbox{2cm}{
+    \begin{tabular}{l}
       subst_rel \\
         f (\textbackslash x -> 5) \\
         f (\textbackslash x -> 5)
-    }
+    \end{tabular}
   }
   \infer0[subst_rel_refl]{
-    \parbox{2cm}{
+    \begin{tabular}{l}
       subst_rel \\ 
         f (\textbackslash x -> 5) \\
         1 1
-    }
+      \end{tabular}
   }
   \infer2[subst_rel_App]{
-    \parbox{3cm}{
+    \begin{tabular}{l}
       subst_rel \\
         f (\textbackslash x -> 5) \\
         (f 1) ((\textbackslash x -> 5) 1)
-    }
+      \end{tabular}
   }
-  \infer1[deep_subst_rel_Let]{
-    \parbox{5cm}{
+  \infer1[Let]{
+    \begin{tabular}{l}
     deep_subst_rel \\
       (let f = (\textbackslash x -> 5) in f 1) \\
       (let f = (\textbackslash x -> 5) in (\textbackslash x -> 5) 1)
-    }
+    \end{tabular}
   }
 % refl_case
-  \infer0[deep_subst_rel_refl]{deep_subst_rel g g}
+  \infer0[refl]{
+    \begin{tabular}{l}
+      deep_subst_rel \\
+        g g
+    \end{tabular}
+  }
 % Conclusion
-  \infer2[deep_subst_rel_App]{
-    \parbox{6cm}{
+  \infer2[App]{
+    \begin{tabular}{l}
     deep_subst_rel \\
       (g (let f = (\textbackslash x -> 5) in f 1)) \\
       (g (let f = (\textbackslash x -> 5) in (\textbackslash x -> 5) 1))
-    }
+    \end{tabular}
   }
 \end{prooftree}
 
@@ -470,27 +480,17 @@ Equivalence of inlining any single definition for \lstinline{deep_subst_rel} rel
 %
 \end{theorem}
 
-This theorem is enough to express a transformation performed by an inlining
-pass. And so if an implementation of an inlining pass can instantiate the
-relation to the input expression and the expression that is the result of
-inlining e.g. \lstinline{deep_subst_rel e (inline e)}, as well as satisfy the
-assumptions for the theorem. Then this theorem can be utilized to show the
-correctness of the pass.
+The proof of this theorem was much more straightforward than the one for \lstinline{subst_rel}. Thanks to the reuse of the \lstinline{subst_rel} relation, the proof was reduced to using congruence rules in most cases and just matching the previously proved theorem for \lstinline{subst_rel} in the \lstinline{Let} case.
 
-Unfortunately, because the relation only allows for inlining one
-expression at a time, the implementation would have the same limitation. This in
-turn would negatively impact the compilation times.
+This theorem is enough to express a transformation performed by an inlining pass. And so, it can be utilized to show the correctness of the pass. More specifically, based on this theorem, an implementation of an inlining pass \lstinline{inline} can be verified by showing that  \lstinline{deep_subst_rel e (inline e)} holds for any expression \lstinline{e}. This implementation would have to follow the syntactic transformations of the \lstinline{deep_subst_rel} relation. This is a much more general theorem than the one for \lstinline{subst_rel}. This theorem already satisfies the requirements for the correctness of an inlining pass, as described in the project goals.
+
+The implementation would have to be implemented in a very specific way. It would have to traverse the AST and once a \lstinline{Let} binding suitable for inlining is found, it would traverse the result subtree and replace all occurrences of the bound variable with the bound expression. After that, the traversal would continue. One can notice that this is not the most efficient way of implementing an inlining pass. Instead, it should be possible to traverse the AST and collect all the bindings suitable for inlining, while simultaneously performing the inlining.
 
 \section{Multi-Inlining Relation}
-\label{verified_inlining:multiinlining_relation}
+\label{verified_inlining_at_the_abstract_level:multiinlining_relation}
 %
 
-An efficient implementation of an inlining pass can inline multiple expressions
-at the same time. Instead of possibly inlining a single expression, while
-traversing an AST, the algorithm should collect all declarations and be able to
-inline every one of them in one go. A new relation has been defined, this time
-indicating the possible inlining of multiple declarations. The full definition
-of this relation is shown in Figure \ref{fig:multiinlining_relation}.
+An efficient implementation of an inlining pass can inline multiple expressions at the same time. Instead of possibly inlining a single expression, while traversing an AST, the algorithm should collect all declarations and be able to inline every one of them in one go. A new relation has been defined, this time indicating the possible inlining of multiple declarations. The full definition of this inductive relation is shown in Figure \ref{fig:multiinlining_relation}.
 
 \begin{figure}
 %
@@ -568,32 +568,17 @@ of this relation is shown in Figure \ref{fig:multiinlining_relation}.
 \label{fig:multiinlining_relation}
 \end{figure}
 
-For any \lstinline{l, t, u}, \lstinline{list_subst_rel l t u} expresses that
-declarations in \lstinline{l} can be inlined in \lstinline{t} possibly multiple times to
-get \lstinline{u}.
+For any \lstinline{l, t, u}, \lstinline{list_subst_rel l t u} expresses that declarations in \lstinline{l} can be inlined in \lstinline{t} possibly multiple times to get \lstinline{u}.
 
-This relation is slightly more complicated than the previous ones. But going
-through the rules:
+This relation is slightly more complicated than the previous ones. But going through the rules:
 
 \begin{enumerate}
-  \item \lstinline{list_subst_rel_Let} -- given a \lstinline{Let} expression,
-  allows adding it to the list of declarations to be inlined.
-  \item \lstinline{list_subst_rel_LetrecInline} -- given a non-mutually
-  recursive \lstinline{Letrec} expression, allows adding it to the list of
-  declarations to be inlined. It is only relevant for specialization.
-  \item \lstinline{list_subst_rel_VarSimp} -- allows inlining a single non-recursive
-  declaration from the list
-  \item \lstinline{list_subst_rel_Var} -- is a more general version of the
-  previous rule, it allows for inlining a single non-recursive declaration in
-  place of a variable reference. In addition, it allows performing other
-  transformations on the inlined expression. This possibly allows for inlining
-  inside the already inlined expression.
-  \item \lstinline{list_subst_rel_LetrecIntro} -- allows for inserting a
-  definition of a recursive function anywhere in the tree. As in the previous
-  case, it also allows for performing other transformations on the inlined
-  declaration. This rule is also only relevant for specialization.
-  \item The rest of the rules behave similarly to their counterparts before --
-  they allow for traversing the tree and inlining deeper.
+  \item \lstinline{list_subst_rel_Let} -- given a \lstinline{Let} expression, allows adding it to the list of declarations to be inlined.
+  \item \lstinline{list_subst_rel_LetrecInline} -- given a non-mutually recursive \lstinline{Letrec} expression, allows adding it to the list of declarations to be inlined. It is only relevant for specialization.
+  \item \lstinline{list_subst_rel_VarSimp} -- allows inlining a single non-recursive declaration from the list
+  \item \lstinline{list_subst_rel_Var} -- is a more general version of the previous rule, it allows for inlining a single non-recursive declaration in place of a variable reference. In addition, it allows performing other transformations on the inlined expression. This possibly allows for inlining inside the already inlined expression.
+  \item \lstinline{list_subst_rel_LetrecIntro} -- allows for inserting a definition of a recursive function anywhere in the tree. As in the previous case, it also allows for performing other transformations on the inlined declaration. This rule is also only relevant for specialization.
+  \item The rest of the rules behave similarly to their counterparts before -- they allow for traversing the tree and inlining deeper.
 \end{enumerate}
 
 Using this relation, it is possible to construct an instance for the following example:
@@ -605,11 +590,11 @@ in f 1
 
 That is the following instance can be constructed:
 \begin{lstlisting}[frame=none]
-list_subst_rel [] (let f = (\x -> 5) in f 1) (let f = (\x -> 5) in (\x -> 5) 1)
+list_subst_rel []
+  (let f = (\x -> 5) in f 1)
+  (let f = (\x -> 5) in (\x -> 5) 1)
 \end{lstlisting}
-To do so, the only constructors needed are the \lstinline{refl},
-\lstinline{Let}, \lstinline{App} and \lstinline{Var} ones. More specifically, to
-construct this relation one has to first use the \lstinline{Let} case:
+To do so, the only constructors needed are the \lstinline{refl}, \lstinline{Let}, \lstinline{App} and \lstinline{Var} ones. More specifically, to construct this relation one has to first use the \lstinline{Let} case:
 
 \begin{theorem}
 \label{theorem:list_subst_rel_Let}
@@ -630,14 +615,9 @@ and
 \begin{lstlisting}[frame=none]
   list_subst_rel [] (\x -> 5) (\x -> 5)
 \end{lstlisting}
-They perform respectively the inlining in the result expression of a
-\lstinline{Let} and the inlining in the bound expression. The second assumption
-is trivial since it doesn't change the expression, so simply follows from
-reflexivity.
+They perform respectively the inlining in the result expression of a \lstinline{Let} and the inlining in the bound expression. The second assumption is trivial since it doesn't change the expression, so simply follows from reflexivity.
 
-The first assumption is more interesting since it introduces a new expression to
-the list of declarations to be inlined. The next step is to use the \lstinline{App}
-case, which takes as assumptions
+The first assumption is more interesting since it introduces a new expression to the list of declarations to be inlined. The next step is to use the \lstinline{App} case, which takes as assumptions
 \begin{lstlisting}[frame=none]
   list_subst_rel [(f, (\x -> 5))] f (\x -> 5)
 \end{lstlisting}
@@ -646,9 +626,7 @@ and
   list_subst_rel [(f, (\x -> 5))] 1 1
 \end{lstlisting}
 
-Again, the second assumption is trivial, since it follows from reflexivity. The
-first one performs the inlining using the \lstinline{VarSimp} constructor which
-only requires the evidence that the variable is in the list of declarations:
+Again, the second assumption is trivial, since it follows from reflexivity. The first one performs the inlining using the \lstinline{VarSimp} constructor which only requires the evidence that the variable is in the list of declarations:
 
 \begin{theorem}
 \label{theorem:list_subst_rel_VarSimp}
@@ -668,8 +646,8 @@ The derivation tree for this relation instance is as follows:
   \infer0[\parbox{2cm}{VarSimp}]{
     \parbox{3cm}{
       list_subst_rel \newline
-      [(f, (\textbackslash x -> 5))] \\
-      f (\textbackslash x -> 5)
+        [(f, (\textbackslash x -> 5))] \\
+        f (\textbackslash x -> 5)
     }
   }
   \infer0[\parbox{2cm}{refl}]{
@@ -682,8 +660,8 @@ The derivation tree for this relation instance is as follows:
   \infer2[\parbox{2cm}{App}]{
     \parbox{5cm}{
       list_subst_rel \newline
-      [(f, (\textbackslash x -> 5))] \\
-      (f 1) ((\textbackslash x -> 5) 1)
+        [(f, (\textbackslash x -> 5))] \\
+        (f 1) ((\textbackslash x -> 5) 1)
     }
   }
 % refl_case
@@ -696,27 +674,16 @@ The derivation tree for this relation instance is as follows:
 % Conclusion
   \infer2[\parbox{2cm}{Let}]{
     \parbox{5cm}{
-    list_subst_rel [] \\
-      (let f = (\textbackslash x -> 5) in f 1) \\
-      (let f = (\textbackslash x -> 5) in (\textbackslash x -> 5) 1)
+      list_subst_rel [] \\
+        (let f = (\textbackslash x -> 5) in f 1) \\
+        (let f = (\textbackslash x -> 5) in (\textbackslash x -> 5) 1)
     }
   }
 \end{prooftree}
 
-Similarly to the previous relation, an equivalence theorem was formulated and
-proved. A modification for this approach is the assumption that the inlining
-pass has to be preceded by a variable freshening pass -- a pass ensuring that
-every variable name is unique. This way the reasoning behind tracking captures
-becomes much simpler. The freshening pass is not part of the scope of this
-thesis.
+Similarly to the previous relation, an equivalence theorem was formulated and proved. A modification for this approach is the assumption that the inlining pass has to be preceded by a variable freshening pass -- a pass ensuring that every variable name is unique. This way the reasoning behind tracking captures becomes much simpler. The freshening pass is not part of the scope of this thesis.
 
-For the multi-inlining relation the core property for correctness is similar to
-the one declared for \lstinline{subst_rel}. Then, it expressed equivalence
-between \lstinline{Let v x t} and \lstinline{Let v x u} with the assumption that
-\lstinline{subst_rel t u}. This time instead of a single \lstinline{Let}, it
-expresses the possibility to inline multiple \lstinline{Let} and
-\lstinline{Letrec} expressions combined. And so the following theorem was
-formulated and proved:
+For the multi-inlining relation the core property for correctness is similar to the one declared for \lstinline{subst_rel}. Then, it expressed equivalence between \lstinline{Let v x t} and \lstinline{Let v x u} with the assumption that \lstinline{subst_rel t u}. This time instead of a single \lstinline{Let}, it expresses the possibility to inline multiple \lstinline{Let} and \lstinline{Letrec} expressions combined. And so the following theorem was formulated and proved:
 
 \begin{theorem}
 \label{theorem:list_subst_rel_IMP_exp_eq_lemma_specialized}
@@ -729,19 +696,9 @@ Equivalence of inlining multiple definitions for \lstinline{list_subst_rel} rela
 %
 \end{theorem}
 
-This theorem shows that for any expressions \lstinline{x, y} and a list of
-declarations \lstinline{xs}, if \lstinline{list_subst_rel xs x y} then
-\lstinline{x} with all declarations in \lstinline{xs} is equivalent to
-\lstinline{y} with all the same declarations. Some assumptions are also
-required. The \lstinline{no_shadowing} relation is used to ensure that the
-freshening pass was performed. It gives the guarantee that no two bound
-variables have the same name. \lstinline{binds_ok} ensures that the list of
-declarations is correct i.e. that no variable is bound twice and that older
-declarations do not depend on the newer ones.
+This theorem shows that for any expressions \lstinline{x, y} and a list of declarations \lstinline{xs}, if \lstinline{list_subst_rel xs x y} then \lstinline{x} with all declarations in \lstinline{xs} is equivalent to \lstinline{y} with all the same declarations. Some assumptions are also required. The \lstinline{no_shadowing} relation is used to ensure that the freshening pass was performed. It gives the guarantee that no two bound variables have the same name. \lstinline{binds_ok} ensures that the list of declarations is correct i.e. that no variable is bound twice and that older declarations do not depend on the newer ones.
 
-Finally, having proved the equivalence of inlining multiple declarations, a theorem
-was formulated and proved that shows the equivalence of inlining an empty
-list of declarations in a closed expression.
+Finally, having proved the equivalence of inlining multiple declarations, a theorem was formulated and proved that shows the equivalence of inlining an empty list of declarations in a closed expression.
 
 \begin{theorem}
 \label{theorem:list_subst_rel_IMP_exp_eq_specialized}
@@ -754,133 +711,4 @@ Equivalence of inlining for \lstinline{list_subst_rel} relation
 %
 \end{theorem}
 
-This theorem is the core of the correctness proof for the inlining pass, as it
-shows the correctness of inlining for any expression. It immediately follows
-from the previous one.
-
-\section{Implementation}
-\label{verified_inlining:implementation}
-%
-
-The implementation of the inlining pass follows the same pattern as the
-multi-inlining relation. It transforms the expression based on the given
-declarations. The implementation is shown in Figure \ref{fig:inline_function_implementation}.
-
-\begin{figure}
-%
-\begin{definition}
-%
-\lstinline{inline} function implementation
-%
-\begin{holthmenv}
-  \HOLthm[def,width=85]{pure_inline_cexp.inline_def}
-\end{holthmenv}
-%
-\end{definition}
-%
-\caption{\lstinline{inline} function implementation}
-\label{fig:inline_function_implementation}
-\end{figure}
-
-
-The function takes:
-
-\begin{enumerate}
-  \item \lstinline{m} -- the map of declarations to be inlined.
-  \item \lstinline{ns} -- the set of names to avoid when freshening variables.
-  \item \lstinline{h} -- the heuristic function that decides whether a declaration is fit to be inlined.
-  \item Lastly, the expression to be transformed.
-\end{enumerate}
-
-The need for passing the set of names might be surprising since the input to the
-function is already freshened. The reason for that is that when inlining an
-expression, it might be valuable to continue inlining inside the inserted
-definition body. Then the names of the variables in the body might clash with
-the names in \lstinline{m}. And so the inserted body has to be freshened again.
-This isn't done in the current implementation of the pass, so it serves as a
-preparation for future improvements.
-
-The implementation follows quite closely the same pattern as the multi-inlining relation.
-
-\begin{itemize}
-  \item \lstinline{Var} case inlines the variable if it is in the map. It also
-  prevents inlining if the expression to be inserted is a lambda abstraction. It
-  is based on the reasoning presented before, there is no benefit from inlining
-  a lambda that is not immediately applied to at least one argument.
-  \item \lstinline{App} case handles inlining in the function and the argument.
-  It is slightly more interesting than the corresponding case in the relation.
-  This case also handles inlining lambda abstractions, since if the callee is a
-  variable reference, it is certain at this point that it will be called with
-  at least one argument.
-  \item \lstinline{Let} case handles adding more declarations to the map. It is
-  worth noting that the heuristic is checked at the point of adding the
-  declaration to the map, instead of at the point of inlining.
-  \item \lstinline{Letrec} case behaves similarly to the \lstinline{Let} case.
-  It only adds non-mutually recursive declarations to the map of inline
-  declarations.
-  \item The rest of the cases simply traverse its children and perform inlining
-  deeper. With one exception, \lstinline{NestedCase} is not affected by the
-  transformation. That is because PureCake doesn't support nested cases at
-  present.
-\end{itemize}
-
-Using this declaration, a final function was defined that is correctly
-initialized and hides all the implementation details.
-
-\begin{definition}
-%
-\lstinline{inline_all} function implementation
-%
-\begin{holthmenv}
-  \HOLthm[def]{pure_inline_cexp.inline_all_def}
-\end{holthmenv}
-%
-\end{definition}
-
-\section{Implementation correctness proof}
-\label{verified_inlining:implementation_correctness_proof}
-%
-
-Using the multi-inlining relation, a theorem was formulated and proved that
-shows that the result of the inlining pass satisfies the relation. The statement
-of the theorem is as follows:
-
-\begin{theorem}
-\label{theorem:inline_cexp_list_subst_rel_spec}
-%
-\begin{holthmenv}
-  \HOLthm[width=80]{pure_inline_cexpProof.inline_cexp_list_subst_rel_spec}
-\end{holthmenv}
-%
-\end{theorem}
-
-This theorem is defined for any \lstinline{m, ns, h, e} so it is
-heuristic-agnostic -- the correctness of the implementation doesn't depend on
-the heuristic. The assumptions are quite similar to the ones for the equivalence
-of the relation. The function \lstinline{exp_of} is the link between the two ASTs,
-it transforms the compiler expressions into meta-theory ones.
-
-\begin{itemize}
-  \item \lstinline{memory_inv} is a new addition. The relation used a simple
-  linked list for the declaration storage. The implementation uses a map, to be
-  more efficient. This assumption ensures that the contents of the map and the
-  list are the same.
-  \item \lstinline{map_ok} is an artifact of using the specific map implementation.
-  \item All the other assumptions give the same guarantees as the ones for the
-  relation-level proof.
-\end{itemize}
-
-Finally, the correctness of the full inlining pass was proved by using the above
-theorem and the equivalence theorem for the relation.
-
-\begin{theorem}
-\label{theorem:inline_all_thm}
-%
-\begin{holthmenv}
-  \HOLthm[width=80]{pure_inline_cexpProof.inline_all_thm}
-\end{holthmenv}
-%
-\end{theorem}
-
-Similarly to the relation-level proof, this theorem is defined for any
-expression that satisfies \lstinline{no_shadowing} and is closed.
+This theorem is the core of the correctness proof for the inlining pass, as it shows the correctness of inlining for any expression. It immediately follows from the previous one.

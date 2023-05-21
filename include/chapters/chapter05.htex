@@ -1,69 +1,102 @@
-\chapter{Conclusions}
-\label{conclusions}
+\chapter{Results}
+\label{results}
 %
 
-This chapter provides a top-level summary of the completed work as well as
-thoughts on related and future work.
+This chapter summarises and evaluates the results obtained in this project. It provides details on the correctness of the pass, as well as the benchmarks showing its quantitative results.
 
-\section{Summary of the completed work}
-\label{conclusions:summary_of_the_completed_work}
+\section{Correctness Proof}
+\label{results:correctness_proof}
 %
 
-As a result of this project, the following results have been achieved:
+The correctness proof of inlining is the main result of this project. It can be separated into the two following theorems:
 
-\begin{itemize}
-  \item An inlining pass for PureCake has been implemented. This pass is
-  heuristic agnostic, so it can be used with any inlining strategy. This makes
-  it easy to fine-tune the pass later.
-  \item An implementation agnostic correctness proof for the inlining pass has
-  been defined and proven correct.
-  \item A correctness theorem has been proved for the inlining pass
-  implementation.
-  \item An unverified function specialization pass has been implemented. The use
-  of this pass is accommodated by both the implementation and the correctness
-  proof of the inlining pass. Also, the verification methodology used in the project
-  allows it to be proven.
-\end{itemize}
+Firstly, the correctness of the relation that encaptures the semantic transformation of the inlining pass:
 
-\section{Related Work}
-\label{conclusions:related_work}
+\begin{theorem}
 %
-
-Verified compilation has been getting more and more traction recently, so there
-are quite a few verified optimizing compilers out there. The most famous of all
-CompCert \cite{compcert} implements multiple optimization passes, one of which
-is function inlining. However, the main difference between CompCert's function
-inlining is that it is done for an imperative language, that only supports
-top-level function declarations. 
-
-Another well-known verified compiler is CakeML, which is a verified compiler for
-an ML-like, impure, eagerly evaluated, functional language. PureCake uses CakeML
-as a back-end, to generate machine code. CakeML being an optimizing compiler has
-its implementation of function inlining \cite{cakemlinlining}. Though the main
-difference with this work is that CakeML is still an impure and
-eagerly-evaluated language.
-
-The research on the Pilsner compiler \cite{pilsner} also touches on topics
-relevant to this work. It is a compiler for an ML-like language that goes
-through a CPS-based intermediate language to an assembly-like target. Function
-inlining optimization is implemented for the intermediate language, because of
-that the inlining is limited to top-level functions.
-
-\section{Future Work}
-\label{conclusions:future_work}
+\begin{HOLmath}
+  \HOLthm[]{pure_inline.list_subst_rel_IMP_exp_eq_specialized}
+\end{HOLmath}
 %
+\end{theorem}
 
-Future work on this project includes the following:
+The equivalence proof for the multi-inlining relation is the most important part of the work. This proof establishes that the multi-inlining relation preserves the semantics of the original program. And because the multi-inlining relation encodes the transformation performed by the inlining pass, this theorem proves the correctness of inlining as a concept.
 
-\begin{itemize}
-  \item The current implementation of inlining only uses a very simple
-  heuristic. This should be changed to a more sophisticated one, preferably one
-  inspired by the GHC compiler. This should also be accompanied by a more
-  comprehensive set of benchmarks.
-  \item At the time of writing, the specialization pass is not verified. This
-  should be done, to be able to introduce the whole inlining pass into the main
-  compiler pipeline.
-  \item The biggest benefit of an inlining pass is that it allows for other
-  optimization to be triggered. And so, the more optimizations on the PureLang
-  level are implemented, the more benefit the inlining pass will bring.
-\end{itemize}
+Secondly, the correctness of the inlining pass implementation:
+
+\begin{theorem}
+%
+\begin{HOLmath}
+  \HOLthm[]{pure_inline_cexpProof.inline_all_thm}
+\end{HOLmath}
+%
+\end{theorem}
+
+This theorem establishes the correctness of the full inlining pass. Like the relation-level proof, this theorem is defined for any expression that satisfies no_shadowing and is closed. It's derived from the equivalence theorem for the relation, thereby providing a thorough proof of the full inlining pass.
+
+Together those two theorems prove that the inlining pass does not alter the semantics of the input program.
+
+\section{Examples}
+\label{results:examles}
+
+To showcase the capabilities of the inlining pass, a few examples are provided. These examples were transformed using the partially unverified pass. This version of the pass is unverified since it uses both the specialization transformation and the freshening function to inline inside the inserted expressions.
+
+Example 1 -- simple inlining of a constant:
+
+\begin{lstlisting}
+let x = 7
+in (\m -> x)
+\end{lstlisting}
+
+The expression after inlining:
+
+\begin{lstlisting}
+let x = 7
+in (\m -> 7)
+\end{lstlisting}
+
+Example 2 -- transitively inlining let bindings:
+
+\begin{lstlisting}
+let f = (\x -> x + 5)
+in let y = f 1
+in 1 + y
+\end{lstlisting}
+
+The expression after inlining:
+
+\begin{lstlisting}
+let f = (lam (x) (+ x (int 5)))
+in let y = (let x = 1 in 1 + 5)
+in 1 + (let x = 1 in 1 + 5)
+\end{lstlisting}
+
+A thing of note in the above example is that the inlining pass paved the way for other optimizations to be applied. In this case, dead code elimination can remove both bindings for \lstinline{x}. This would allow for the constant value to be computed at compile time by yet another optimization pass.
+
+Example 3 -- specialization:
+
+\begin{lstlisting}
+letrec map = \f -> \lst -> case lst of
+  [] -> []
+  (x:xs) -> f x : map f xs
+in
+  let foo = (\x -> x + 1) 
+  in map foo
+\end{lstlisting}
+
+The expression after inlining:
+
+\begin{lstlisting}
+letrec map = \f -> \lst -> case lst of
+  [] -> []
+  (x:xs) -> f x : map f xs
+in
+  let foo = (\x -> x + 1) 
+  in 
+    letrec map = \f -> \lst -> case lst of
+      [] -> []
+      (x:xs) -> foo x : map foo xs
+    in map foo
+\end{lstlisting}
+
+Note that the specialization algorithm only specializes in the definition of \lstinline{map}, without removing the original argument. This optimization of removing unused bindings can be performed by another optimization pass, similar to dead code elimination.

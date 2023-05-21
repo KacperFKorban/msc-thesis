@@ -3,4 +3,4 @@ Saved definition ____ "OMIT_def"
 Saved definition ____ "foo_def"
 Saved theorem _______ "foo_omit_def"
 Exporting theory "pp" ... done.
-Theory "pp" took 1.5s to build
+Theory "pp" took 1.4s to build
