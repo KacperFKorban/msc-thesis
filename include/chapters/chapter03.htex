@@ -8,7 +8,7 @@ This chapter continues the approach described in Section \ref{verified_inlining_
 \label{verified_implementation_of_inlining:implementation}
 %
 
-The implementation of the inlining pass follows the same pattern as the multi-inlining relation. It transforms the expression based on the given declarations. The implementation is shown in Figure \ref{fig:inline_function_implementation}.
+The implementation of the inlining pass follows the same pattern as the multi-inlining relation. It transforms the expression based on the given declarations. The implementation is shown in Figure \ref{fig:inline_function_implementation}. It is worth reminding that the implementation of the transformation uses different types of expressions than the meta-level proof that were described so far. The implementation uses the \lstinline{cexp} type, which contains some additional constructors -- explicit \lstinline{Let}, \lstinline{Case} and currently unused \lstinline{NestedCase}. The bridge that connects those two types of expressions is a function \lstinline{exp_of} that transforms compiler expressions into meta-level expressions.
 
 \begin{figure}
 %
@@ -26,7 +26,7 @@ The implementation of the inlining pass follows the same pattern as the multi-in
 \label{fig:inline_function_implementation}
 \end{figure}
 
-The function takes:
+The \lstinline{inline} function takes:
 
 \begin{enumerate}
   \item \lstinline{m} -- the map of declarations to be inlined.

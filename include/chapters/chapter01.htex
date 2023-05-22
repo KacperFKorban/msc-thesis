@@ -35,7 +35,161 @@ The syntax of HOL4 is not necessary to understand the work done in this project 
 
 PureCake is a verified compiler for a pure, lazy, functional programming language. It uses a Haskell-like syntax and type system. PureCake produces CakeML code, which allows for its compilation to be verified from the source to the machine code.
 
-PureCake compilation pipeline consists of four intermediate languages. For this project, the relevant language is the one used in the front end -- PureLang. PureCake differentiates between the compiler language and the language used for transformation proofs. The declaration of the abstract syntax tree for the meta-level language is as follows:
+PureCake compilation pipeline consists of four intermediate languages. The overview of the compiler architecture is presented in Figure \ref{fig:purecake}. For this project, the relevant language is the one used in the front end -- PureLang. PureCake differentiates between the compiler language and the language used for transformation proofs. The declaration of the abstract syntax tree for the meta-level language is as follows:
+
+\begin{figure}[t]
+  \scalebox{0.75}{
+  \hspace{-1cm}\begin{tikzpicture}[
+    block/.style={draw, rectangle, rounded corners=5pt,
+                  align=center, inner xsep=1ex, inner ysep=1mm, text width=40mm,
+                  below = 2mm of #1},
+    ->/.style={out=340, in=20, looseness= #1 , -stealth, shorten <=1.5mm, shorten >=1.5mm},
+    ->/.default=3,
+    lab/.style={right=1ex, align=left, text width=60mm, yshift= #1 mm},
+    lab/.default=0,
+    comm/.style={right=-4mm of #1, align=left, text width=85mm}
+    ]
+
+    % Titles
+    \node (lang) [align=center, text width=35mm, text depth=0mm] {\textbf{Language}};
+    \node (comp) [lab, right=4mm of lang, text depth=0mm] {\textbf{Compiler implementation}};
+    \node (verif) [comm={comp}, text depth=0mm] {\textbf{Comments on verification}};
+
+
+    % Languages
+    \node (source) [block={lang}]
+      {Concrete syntax};
+    \node (pure) [block={source}]
+      {\vspace{1.75em} \\
+      \textsc{PureLang} \\
+      pure call-by-name \\
+      (subst. semantics) \\
+      \vspace{1em}~ };
+    \node (thunk) [block={pure}]
+      {\vspace{1.25em} \\
+      \textsc{ThunkLang} \\
+      pure call-by-value \\
+      (subst. semantics) \\
+      \vspace{0.75em}~ };
+    \node (env) [block={thunk}]
+      {\textsc{EnvLang} \\
+      pure call-by-value \\
+      (env. semantics) };
+    \node (state) [block={env}]
+      {\vspace{0.25em} \\
+      \textsc{StateLang} \\
+      impure call-by-value \\
+      (env. semantics) \\
+      \vspace{-0.2em}~ };
+    \node (cake) [block={state}]
+        {\textsc{CakeML} source};
+
+    % Compilation
+      % source -> pure
+      \draw[->] ([yshift=2mm]source.south east) to node (lex) [lab]
+        {lexing, parsing, desugaring}
+      ([yshift=-2mm]pure.north east);
+
+      % pure -> pure
+      \draw[->] ([yshift=-3mm]pure.north east) to node (split) [lab]
+        {split \lstinline{letrec}s; simplify}
+      ([yshift=-9mm]pure.north east);
+      \draw[->] ([yshift=4.5mm, xshift=3.6mm]pure.east) to [out=0,in=0] node (type) [lab]
+        {type inference}
+      ([yshift=4.5mm]pure.east);
+      \draw[->] ([yshift=-15mm]pure.north east) to node (deadcode) [lab]
+        {simplify}
+      ([yshift=-21mm]pure.north east);
+      \draw[->] ([yshift=-22.5mm]pure.north east) to node (demand) [lab]
+        {demand analysis \\[-1mm]
+        annotates with \lstinline{seq}s}
+      ([yshift=-28.5mm]pure.north east);
+
+      % pure -> thunk
+      \draw[->={1.5}] ([yshift=1mm]pure.south east) to node (tothunk) [lab]
+        {translate into call-by-value; \\[-1mm]
+        introduce \lstinline{delay}/\lstinline{force}; \\[-1mm]
+        avoid \lstinline{delay (force (var _))}}
+      ([yshift=-9mm]thunk.north east);
+
+      % thunk -> thunk
+      \draw[->] ([yshift=-12mm]thunk.north east) to node [lab]
+        {lift $\lambda$-abstractions out \\[-1mm]
+        of \lstinline{let}s/\lstinline{letrec}s}
+      ([yshift=-18mm]thunk.north east);
+      \draw[->] ([yshift=-21mm]thunk.north east) to node (thunktothunk) [lab]
+        {simplify \lstinline{force} expressions}
+      ([yshift=-27mm]thunk.north east);
+
+      % thunk -> env
+      \draw[->={2.2}] ([yshift=1mm]thunk.south east) to node (toenv) [lab]
+        {reformulate to simplify \\[-1mm]
+        compilation to \textsc{StateLang}}
+      ([yshift=-5mm]env.north east);
+
+      % env -> state
+      \draw[->={1.8}] ([yshift=7mm]env.south east) to node (tostate) [lab]
+        {compile \lstinline{delay}/\lstinline{force} and \\[-1mm]
+        \lstinline{IO} monad to stateful ops}
+      ([yshift=-1mm]state.north east);
+
+      % state -> state
+      \draw[->] ([yshift=-3mm]state.north east) to node (pushunit) [lab]
+        {push $\underline{\hspace{1.2ex}} \cdot$ \lstinline{unit} inwards}
+      ([yshift=-9mm]state.north east);
+      \draw[->] ([yshift=-11mm]state.north east) to node (lamnames) [lab]
+        {make every $\lambda$-abstraction \\[-1mm]
+        bind a variable}
+      ([yshift=-17mm]state.north east);
+
+      % state -> cake
+      \draw[->] ([yshift=1mm]state.south east) to node (tocake) [lab={-2}]
+        {translate to CakeML; \\[-1mm]
+        attach helper functions}
+      ([yshift=-3mm]cake.north east);
+
+
+    % Verification
+      \node[comm={lex}]
+        {can reject input; unverified};
+      \node[comm={split}]
+        {preserves $\cong$};
+      \node[comm={type}]
+        {sound: rejects ill-typed programs};
+      \node[comm={deadcode}]
+        {preserves $\cong$};
+      \node[comm={demand}]
+        {preserves $\approx$ and well-typing};
+      \node[comm={tothunk}]
+        {proof split into \emph{five relations}; \\[-1mm]
+        implementation stays within their composition};
+      \node[comm={thunktothunk},yshift=5mm]
+        {implementation stays within \emph{transitive closure} \\[-1mm]
+        of semantics-preserving syntactic relations};
+      \node (commtostate) [comm={tostate},yshift=7mm]
+        {proof composed of three relations: \\[-1mm]
+        ~~1. implement \lstinline{IO} monad statefully \\[-1mm]
+        ~~2. implement \lstinline{delay}/\lstinline{force} statefully \\[-1mm]
+        ~~3. tidy the result};
+      \draw[dashed,-stealth,gray] ([yshift=-3mm]commtostate.north west) -- ([xshift=-13mm,yshift=-3mm]tostate.north east);
+      \node (commpushunit) [comm={pushunit},yshift=-2mm]
+        {implementation stays within \emph{transitive closure} \\[-1mm]
+        of semantics-preserving syntactic relation};
+      \draw[dashed,-stealth,gray] ([yshift=2mm]commpushunit.west) -- ([xshift=-18mm]pushunit.east);
+
+
+    % Frontend/backend line
+    \draw[dashed] ([yshift=-14mm, xshift=-20mm]pure.west) -- ([yshift=-14mm,xshift=130mm]pure.east);
+    \node [below = -9mm of pure, xshift=-32mm, align=left]
+      {front end};
+    \node [below = -2.5mm of pure, xshift=-32mm, align=left]
+      {back end};
+
+  \end{tikzpicture}
+  }
+\caption{High-level summary of PureCake's intermediate languages and compilation passes. Used with the permission of the authors of the PLDI paper \cite{purecake}}
+\label{fig:purecake}
+\end{figure}
 
 \begin{definition}
 %  
