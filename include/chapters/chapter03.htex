@@ -66,10 +66,10 @@ Using this declaration, a final function was defined that is correctly initializ
 Using the multi-inlining relation, a theorem was formulated and proved that shows that the result of the inlining pass satisfies the relation. The statement of the theorem is as follows:
 
 \begin{theorem}
-\label{theorem:inline_cexp_list_subst_rel_spec}
 %
+\lstinline{inline} function correctness theorem
 \begin{holthmenv}
-  \HOLthm[width=80]{pure_inline_cexpProof.inline_cexp_list_subst_rel_spec}
+  \HOLthm[width=80]{pure_inline_cexpProof.inline_cexp_list_subst_rel_specialized}
 \end{holthmenv}
 %
 \end{theorem}
@@ -82,11 +82,60 @@ This theorem is defined for any \lstinline{m, ns, h, e} so it is heuristic-agnos
   \item All the other assumptions give the same guarantees as the ones for the relation-level proof.
 \end{itemize}
 
+The proof of this theorem uses the induction theorem from the definition of the \lstinline{inline} function. The approach for every case of the proof follows the same pattern, which is to just follow the implementation and for every code branch, instantiate the \lstinline{list_subst_rel} relation with the appropriate constructor.
+
+For example, the sequent for the \lstinline{Var} case after expanding the definition of \lstinline{inline} is:
+
+\begin{lstlisting}
+0.  memory_inv xs m
+1.  map_ok m
+2.  no_shadowing (exp_of (Var a v))
+3.  DISJOINT (set (MAP FST xs)) (boundvars (exp_of (Var a v)))
+4.  (case lookup m v of
+        NONE => (Var a v, ns)
+      | SOME (cExp e) => if is_Lam e then (Var a v, ns) else (e, ns)
+      | SOME (cRec e') => (Var a v, ns)) = (t,ns1)
+------------------------------------
+    list_subst_rel xs (exp_of (Var a v)) (exp_of t)
+\end{lstlisting}
+
+Next, the proof splits on the value of \lstinline{lookup m v}. The \lstinline{NONE} case is immediately solved by the \lstinline{list_subst_rel_refl} constructor. The sequent for the \lstinline{SOME} part is as follows:
+
+\begin{lstlisting}
+0.  memory_inv xs m
+1.  map_ok m
+2.  no_shadowing (exp_of (Var a v))
+3.  DISJOINT (set (MAP FST xs)) (boundvars (exp_of (Var a v)))
+4.  (case x of
+        cExp e => if is_Lam e then (Var a v,ns) else (e,ns)
+      | cRec e' => (Var a v,ns)) = (t,ns1)
+5.  lookup m v = SOME x
+------------------------------------
+    list_subst_rel xs (exp_of (Var a v)) (exp_of t)
+\end{lstlisting}
+
+And so the proof splits on the value of \lstinline{x}. And this time the \lstinline{cRec} case is immediately solved by the \lstinline{list_subst_rel_refl} constructor. Then, after the split on the value of \lstinline{is_Lam e}, the \lstinline{list_subst_rel_refl} constructor solves the positive case. The sequent for the negative case is as follows:
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+0.  {explode a | (*\exsts*)e. lookup m a = SOME e} = set (MAP FST xs)
+1.  (*\fall*)v e. lookup m v = SOME e (*\imp*) MEM (explode v,crhs_to_rhs e) xs
+2.  map_ok m
+3.  lookup m v = SOME (cExp c)
+4.  (*\nneg*)is_Lam c
+------------------------------------
+    list_subst_rel xs (Var (explode v)) (exp_of c)
+\end{lstlisting}
+
+This matches exactly the \lstinline{list_subst_rel_VarSimp} constructor. After applying it and expanding some assumptions, the proof is complete.
+
+A similar approach applies to the rest of the cases.
+
 Finally, the correctness of the full inlining pass was proved by using the above theorem and the equivalence theorem for the relation.
 
 \begin{theorem}
 \label{theorem:inline_all_thm}
 %
+Correctness theorem for the \lstinline{inline_all} function
 \begin{holthmenv}
   \HOLthm[width=80]{pure_inline_cexpProof.inline_all_thm}
 \end{holthmenv}

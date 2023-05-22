@@ -21,7 +21,7 @@ To address the first goal, research into verified compilers is becoming more and
 \label{introduction:compilers:purecake}
 %
 
-PureCake is a verified compiler for a Haskell-like language. That is a pure, functional language with lazy evaluation and monadic effects. The syntax supported by PureCake is indentation based to best mimic Haskell's syntax. PureCake also provides proof of its type soundness and the correctness of its Hindley-Milner style type inference. PureCake compiles the source code into CakeML code and it also contains formal proof of the correctness of its compilation process. So if we combine that with the proof of correctness for the source-to-machine-code compilation of CakeML, the whole PureCake compilation pipeline is formally verified to be correct.
+PureCake \cite{purecake} is a verified compiler for a Haskell-like language. That is a pure, functional language with lazy evaluation and monadic effects. The syntax supported by PureCake is indentation based to best mimic Haskell's syntax. PureCake also provides proof of its type soundness and the correctness of its Hindley-Milner style type inference. PureCake compiles the source code into CakeML code and it also contains formal proof of the correctness of its compilation process. So if we combine that with the proof of correctness for the source-to-machine-code compilation of CakeML, the whole PureCake compilation pipeline is formally verified to be correct.
 
 \subsection{Compiler optimizations}
 \label{introduction:compilers:compiler_optimizations}

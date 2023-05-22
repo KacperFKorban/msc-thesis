@@ -215,6 +215,10 @@ The derivation tree for this relation instance is as follows:
   }
 \end{prooftree}
 
+\subsection{Single inlining equivalence}
+\label{verified_inlining_at_the_abstract_level:single_inlining_relation:single_inlining_equivalence}
+%
+
 Using this relation, the core of a single inlining of a specific expression is formulated.
 
 \begin{theorem}
@@ -490,7 +494,7 @@ The implementation would have to be implemented in a very specific way. It would
 \label{verified_inlining_at_the_abstract_level:multiinlining_relation}
 %
 
-An efficient implementation of an inlining pass can inline multiple expressions at the same time. Instead of possibly inlining a single expression, while traversing an AST, the algorithm should collect all declarations and be able to inline every one of them in one go. A new relation has been defined, this time indicating the possible inlining of multiple declarations. The full definition of this inductive relation is shown in Figure \ref{fig:multiinlining_relation}.
+An efficient implementation of an inlining pass can inline multiple expressions at the same time. Instead of inlining only a single expression whenever an appropriate binding is found, the algorithm should collect all declarations and be able to inline every one of them in one go. A new relation has been defined, this time indicating the possible inlining of multiple declarations. The full definition of this inductive relation is shown in Figure \ref{fig:multiinlining_relation}.
 
 \begin{figure}
 %
@@ -681,9 +685,13 @@ The derivation tree for this relation instance is as follows:
   }
 \end{prooftree}
 
+\subsection{Multi-inlining relation equivalence}
+\label{verified_inlining_at_the_abstract_level:multiinlining_relation:multi_inlining_relation_equivalence}
+%
+
 Similarly to the previous relation, an equivalence theorem was formulated and proved. A modification for this approach is the assumption that the inlining pass has to be preceded by a variable freshening pass -- a pass ensuring that every variable name is unique. This way the reasoning behind tracking captures becomes much simpler. The freshening pass is not part of the scope of this thesis.
 
-For the multi-inlining relation the core property for correctness is similar to the one declared for \lstinline{subst_rel}. Then, it expressed equivalence between \lstinline{Let v x t} and \lstinline{Let v x u} with the assumption that \lstinline{subst_rel t u}. This time instead of a single \lstinline{Let}, it expresses the possibility to inline multiple \lstinline{Let} and \lstinline{Letrec} expressions combined. And so the following theorem was formulated and proved:
+For the multi-inlining relation the core property for correctness is similar to the one declared for \lstinline{subst_rel}. Then, it expressed equivalence between \lstinline{Let v x t} and \lstinline{Let v x u} with the assumption that \lstinline{subst_rel v x t u}. This time instead of a single \lstinline{Let}, it expresses the equivalence of inlining multiple \lstinline{Let} and \lstinline{Letrec} expressions combined. And so the following theorem was formulated and proved:
 
 \begin{theorem}
 \label{theorem:list_subst_rel_IMP_exp_eq_lemma_specialized}
@@ -696,7 +704,189 @@ Equivalence of inlining multiple definitions for \lstinline{list_subst_rel} rela
 %
 \end{theorem}
 
-This theorem shows that for any expressions \lstinline{x, y} and a list of declarations \lstinline{xs}, if \lstinline{list_subst_rel xs x y} then \lstinline{x} with all declarations in \lstinline{xs} is equivalent to \lstinline{y} with all the same declarations. Some assumptions are also required. The \lstinline{no_shadowing} relation is used to ensure that the freshening pass was performed. It gives the guarantee that no two bound variables have the same name. \lstinline{binds_ok} ensures that the list of declarations is correct i.e. that no variable is bound twice and that older declarations do not depend on the newer ones.
+Where \lstinline{Binds} is defined as follows:
+
+\begin{definition}
+\label{definition:Binds}
+%
+\begin{holthmenv}
+  \HOLthm[width=80]{pure_inline.Binds_def}
+\end{holthmenv}
+%
+\end{definition}
+
+This theorem shows that for any expressions \lstinline{x, y} and a list of declarations \lstinline{xs}, if \lstinline{list_subst_rel xs x y} then \lstinline{x} with all declarations in \lstinline{xs} is equivalent to \lstinline{y} with all the same declarations. Some assumptions are also required. \lstinline{binds_ok} ensures that the list of declarations is correct i.e. that no variable is bound twice and that older declarations do not depend on the newer ones. The \lstinline{no_shadowing} relation is used to ensure that the freshening pass was performed. It gives the guarantee that no two bound variables have the same name. This inductive relation is defined in Figure \ref{fig:no_shadowing}.
+
+\begin{figure}
+%
+  \begin{definition}
+    \lstinline{no_shadowing_Var}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.no_shadowing_Var}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{no_shadowing_Prim}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.no_shadowing_Prim}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{no_shadowing_App}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.no_shadowing_App}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{no_shadowing_Lam}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.no_shadowing_Lam}
+    \end{holthmenv}
+  \end{definition}
+
+  \begin{definition}
+    \lstinline{no_shadowing_Letrec}
+    \begin{holthmenv}
+      \HOLthm[width=80]{pure_inline.no_shadowing_Letrec}
+    \end{holthmenv}
+  \end{definition}
+%
+\caption{Definition of \lstinline{no_shadowing} relation}
+\label{fig:no_shadowing}
+\end{figure}
+
+Additionally, other assumptions that follow from performing freshening on the whole program and the program being closed are required. Those assumptions assert that the bound variables of \lstinline{x} are not used in any context in the list of declarations \lstinline{xs} and aren't used as free variables in \lstinline{x}.
+
+This is the most substantial proof done in this thesis. It is also the most complex one. The following is an abstract description of the proof strategy used. Before diving into the proof details, some notes are worth reminding. Firstly, there are two ways in which a new binding can be introduced to the inlining list: a \lstinline{Let} expression or a \lstinline{Letrec} with a single binding. Secondly, those bindings are inlined in two distinct ways. Nonrecursive expressions are inlined in place of their explicit references. Recursive expressions can be inlined in any place in the program.
+
+The equivalence theorem was proved by induction on the \lstinline{list_subst_rel} relation. Any cases that don't insert anything to the bindings list and don't look up anything from it were approached in a very similar way as in the \lstinline{subst_rel_IMP_exp_eq} theorem. The \lstinline{Binds} were pushed down into all subtrees of the expression. Next, the congruence rules for that constructor were used reducing the goal to only having to prove the equivalence of the subexpressions. After that, the induction hypothesis was applied and the goal was proved. This time there were no existing theorems that allow for pushing the \lstinline{Binds} into subgoals, so they had to be proved first. An example case that followed this schema is \lstinline{Lam}, the sequent for it is as follows:
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+0.  list_subst_rel xs x y
+1.  DISJOINT (boundvars x) (freevars x) (*\imp*) Binds xs x (*\expeq*) Binds xs y
+2.  binds_ok xs
+3.  DISJOINT (boundvars x) (vars_of xs)
+4.  w (*\nin*) vars_of xs
+5.  DISJOINT (boundvars x) (freevars x DELETE w)
+6.  DISJOINT (boundvars x) (freevars_of xs)
+7.  w (*\nin*) freevars_of xs
+8.  no_shadowing x
+9.  w (*\nin*) boundvars x
+------------------------------------
+    Binds xs (Lam w x) (*\expeq*) Binds xs (Lam w y)
+\end{lstlisting}
+
+Next, the following theorem is used and a congruence rule for \lstinline{Lam} is applied to the goal:
+
+\begin{theorem}
+%
+\lstinline{Binds_Lam}
+%
+\begin{holthmenv}
+  \HOLthm[width=80]{pure_inline.Binds_Lam_specialized}
+\end{holthmenv}
+%
+\end{theorem}
+
+The resulting sequent is the following:
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+0.  list_subst_rel xs x y
+1.  DISJOINT (boundvars x) (freevars x) (*\imp*) Binds xs x (*\expeq*) Binds xs y
+2.  binds_ok xs
+3.  DISJOINT (boundvars x) (vars_of xs)
+4.  w (*\nin*) vars_of xs
+5.  DISJOINT (boundvars x) (freevars x DELETE w)
+6.  DISJOINT (boundvars x) (freevars_of xs)
+7.  w (*\nin*) freevars_of xs
+8.  no_shadowing x
+9.  w (*\nin*) boundvars x
+------------------------------------
+    Binds xs x (*\expeq*) Binds xs y
+\end{lstlisting}
+
+This goal matches the inductive hypothesis, making the only thing left to do is some accounting with the assumptions.
+
+The more interesting, cases are those that perform the inlining by inserting new definitions. Inlining both the recursive and nonrecursive expressions uses the same lemma. The lemma is defined as follows:
+
+\begin{theorem}
+%
+\lstinline{Binds_MEM}
+%
+\begin{holthmenv}
+  \HOLthm[width=80]{pure_inline.Binds_MEM_specialized}
+\end{holthmenv}
+%
+\end{theorem}
+
+This lemma states that if a binding \lstinline{e} is in the list of definitions \lstinline{xs}, then it is possible to copy \lstinline{e} and add this copy to the and of the declarations list. The proof of this lemma is briefly described in the following steps:
+
+\begin{enumerate}
+  \item Induction on \lstinline{xs} is used. The empty list case is trivial, since \lstinline{e} has to be a member of the list.
+  \item For the other case, if the head of the list is not \lstinline{h} then the inductive hypothesis is applied and the goal is proved.
+  \item Otherwise, the strategy is to show that \lstinline{e} can be duplicated at the head of the list. Then next, the copy can be pushed to the end of the list. This is done by induction on the current tail. Where the base case is trivial again.
+  \item The inductive case then unwinds to be split into four different cases, depending on the type of \lstinline{e} and the next element on the list. Proofs for each of those cases use slightly lower level transformations, like weak haed evaluation equality, similarly to the \lstinline{Let_Var3} theorem used in the \lstinline{subst_rel_IMP_exp_eq} proof. The statement of one of those lemmas is as follows:
+  \begin{theorem}
+  %
+  \lstinline{Let_Let_copy}
+  \begin{holthmenv}
+    \HOLthm[width=80]{pure_inline.Let_Let_copy_specialized}
+  \end{holthmenv}
+  %
+  \end{theorem}
+\end{enumerate}
+
+The \lstinline{Bings_MEM} lemma is a very significant part of the whole proof and allows almost singlehandedly proving the \lstinline{list_subst_rel_Var}, \lstinline{list_subst_rel_VarSimp} and \lstinline{list_subst_rel_LetrecInline} cases of the theorem.
+
+Other interesting parts of the proof are the cases that introduce new bindings. Though surprisingly, those cases weren't much more complicated than the \lstinline{list_subst_rel_App} once due to the way how the \lstinline{Binds} relation is defined. A lot of accounting still has to be done to make the assumptions match the inductive hypothesis, but the actual proof is relatively simple. For example, the relevant part of the sequent for the \lstinline{list_subst_rel_Let} case is the following:
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+...
+1.  ... (*\imp*) Binds xs x (*\expeq*) Binds xs y
+...
+3.  ... (*\imp*)
+    Binds (xs ++ [(v,Exp x)]) x' (*\expeq*) Binds (xs ++ [(v,Exp x)]) y'
+...
+------------------------------------
+  Binds xs (Let v x x') (*\expeq*) Binds xs (Let v y y')
+\end{lstlisting}
+
+Here assumptions \lstinline{1.} and \lstinline{3.} are the inductive hypotheses. And because the definition of \lstinline{Binds} essentially defines a 'stack' of \lstinline{Let}s and \lstinline{Letrec}s, assumption \lstinline{3.} can be rewritten as follows:
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+...
+1.  ... (*\imp*) Binds xs x (*\expeq*) Binds xs y
+...
+3.  ... (*\imp*)
+    Binds xs (Let v x x') (*\expeq*) Binds xs (Let v x y')
+...
+------------------------------------
+  Binds xs (Let v x x') (*\expeq*) Binds xs (Let v y y')
+\end{lstlisting}
+
+From this point, the proof constitutes of the following steps:
+\begin{enumerate}
+  \item Applying the inductive hypothesis from assumption \lstinline{3.} to the goal.
+  \item Using the \lstinline{Binds_Let} theorem to pull the \lstinline{Let} definition from inside of the \lstinline{Binds}. The theorem is defined as follows:
+  \begin{theorem}
+  %
+  \begin{holthmenv}
+    \HOLthm[width=80]{pure_inline.Binds_Let_specialized}
+  \end{holthmenv}
+  %
+  \end{theorem}
+  \item Use the congruence rule for \lstinline{Let} to match the goal to the other inductive hypothesis.
+  \item Apply the inductive hypothesis from assumption \lstinline{1.} to the goal.
+\end{enumerate}
+
+The proof for the \lstinline{list_subst_rel_LetrecIntro} case is very similar, apart from using the appropriate theorems for \lstinline{Letrec} instead of \lstinline{Let}.
+
+\subsection{Multi-inlining relation correctness}
+\label{verified_inlining_at_the_abstract_level:multiinlining_relation:multi_inlining_relation_correctness}
+%
 
 Finally, having proved the equivalence of inlining multiple declarations, a theorem was formulated and proved that shows the equivalence of inlining an empty list of declarations in a closed expression.
 
@@ -711,4 +901,4 @@ Equivalence of inlining for \lstinline{list_subst_rel} relation
 %
 \end{theorem}
 
-This theorem is the core of the correctness proof for the inlining pass, as it shows the correctness of inlining for any expression. It immediately follows from the previous one.
+This theorem is the core of the correctness proof for the inlining pass, as it shows the correctness of inlining for any expression. It immediately follows from the previous one, since it just instantiates the list of declarations to be empty. Proof of this theorem allows for proving the correctness of an efficient implementation of the inlining pass.

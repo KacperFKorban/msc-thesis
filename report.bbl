@@ -1,7 +1,9 @@
 \begin{thebibliography}{1}
 
-\bibitem{compcert}
-
+\bibitem{purecake}
+HRUTVIK KANABAR, SAMUEL VIVIEN, OSKAR ABRAHAMSSON, MAGNUS~O MYREEN, MICHAEL
+  NORRISH, JOHANNES~{\AA}MAN POHJOLA, and RICCARDO ZANETTI.
+\newblock Purecake: A verified compiler for a lazy functional.
 
 \bibitem{cakeml}
 Ramana Kumar, Magnus~O. Myreen, Michael Norrish, and Scott Owens.
@@ -9,6 +11,13 @@ Ramana Kumar, Magnus~O. Myreen, Michael Norrish, and Scott Owens.
 \newblock In {\em Proceedings of the 41st ACM SIGPLAN-SIGACT Symposium on
   Principles of Programming Languages}, POPL '14, page 179–191, New York, NY,
   USA, 2014. Association for Computing Machinery.
+
+\bibitem{compcert}
+Xavier Leroy, Sandrine Blazy, Daniel K{\"a}stner, Bernhard Schommer, Markus
+  Pister, and Christian Ferdinand.
+\newblock Compcert-a formally verified optimizing compiler.
+\newblock In {\em ERTS 2016: Embedded Real Time Software and Systems, 8th
+  European Congress}, 2016.
 
 \bibitem{cakemlinlining}
 ALEXANDER MIHAJLOVIC.

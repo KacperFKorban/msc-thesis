@@ -45,8 +45,6 @@ Optionally, you can override how things are pretty-printed by editing \texttt{ov
 
 \section{Figures}
 
-In the following sections, examples of a figure, an equation, a table and a source code listing  are shown~\cite{Rodriguez2017}.
-
 \section{Figure}
 \begin{figure}[H]
 \centering

@@ -2,7 +2,7 @@
 \label{verified_specialization}
 %
 
-This chapter describes work done on the inlining specialization. It concentrates on the approach to proving the correctness of the pass and the chosen optimization algorithm.
+This chapter describes work done on the inlining specialization. It concentrates on the implementation of the specialization pass and the approach of introducing this optimization into the inlining pass.
 
 \section{Goal}
 \label{verified_specialization:goal}
@@ -34,7 +34,7 @@ in
     in map
 \end{lstlisting}
 
-Similarly to the inlining pass, this pass should also only apply this optimization when the recursive function is immediately applied to an argument, otherwise the compiler would just end up adding extra code without any profit. That is also why, the original binding should not be removed in this pass -- only copied.
+Similarly to the inlining pass, this optimization should also only be used when the recursive function is immediately applied to an argument, otherwise the compiler would just end up adding extra code without any profit. That is also why, the original binding should not be removed in this pass -- only copied.
 
 \section{Specializing approach}
 \label{verified_specialization:specializing_approach}
@@ -51,7 +51,7 @@ The use of specialization is accommodated by the inlining pass. When looking bac
 %
 \end{theorem}
 
-This inlining case for any expression \lstinline{x} performs inlining on it, with the result \lstinline{y}. Allows inserting a \lstinline{Letrec} binding around the result and gives as the result any expression that is equivalent to \lstinline{Letrec [(v,t)] y}. And so, if a specialization pass gives an equivalent output expression, it can be used during the inlining pass. That is, specialization can be split into two parts for a term \HOLtm{f x}:
+This inlining case for any expression \lstinline{x} performs inlining on it, with the result \lstinline{y}. Allows inserting a \lstinline{Letrec} binding around the result and gives as the result any expression that is equivalent to \lstinline{Letrec [(v,t)] y}. And so, if a specialization pass gives an equivalent output expression, it can be used during the inlining pass. That is, specialization can be split into two parts for a given term \HOLtm{f x}:
 
 \begin{itemize}
   \item First inline the definition for \HOLtm{f}. This transformation could give the following code:
@@ -66,13 +66,13 @@ This inlining case for any expression \lstinline{x} performs inlining on it, wit
   \end{lstlisting}
 \end{itemize}
 
-Currently, the specialization pass is unverified, though the current methodology allows for it to be proven correct.
+Currently, the specialization pass is unverified, though the current methodology allows for it to be proven correct. The implementation level proof for inlining also makes it easy for the specialization proof to be introduced.
 
 \section{Implementation}
 \label{verified_specialization:implementation}
 %
 
-The specialization is not implemented as a separate pass. Instead, it is only a transformation function that is used by the inlining pass. The function is defined as follows:
+The specialization is not implemented as a separate pass. Instead, it is simply a transformation function that is used by the inlining pass. The function is defined as follows:
 
 \begin{definition}
 %
@@ -91,14 +91,31 @@ This function takes:
 
 The output of this function is the specialized version of the provided \lstinline{letrec} body.
 
-The specialization can only be performed on \lstinline{letrec}s with bodies as top-level lambda abstractions, otherwise there are no arguments to specialize. The function works in the following steps:
+The specialization can only be performed on \lstinline{letrec}s with bodies that are top-level lambda abstractions, otherwise there are no arguments to specialize. The function works in the following steps:
 \begin{enumerate}
-  \item It uses \lstinline{const_call_args} to find for all "constant arguments" -- arguments of \lstinline{f} that are always only called with the references to themselves in recursive calls to \lstinline{f}.
-  \item It then computes a lookup for all "constant arguments" and their appropriate values in \lstinline{args}.
+  \item It uses \lstinline{const_call_args} to find for all "constant arguments" -- arguments of \lstinline{f} that are always only called with the references to themselves in recursive calls to \lstinline{f}. The implementation of this function is shown in Figure \ref{fig:const_call_args_implementation}. This function takes the name of the \lstinline{letrec}, the names of its top-level arguments and the body of the \lstinline{letrec}.
+  \item It then computes a lookup for all "constant arguments" and their appropriate values in \lstinline{args}. This lookup is then used to substitute the constant arguments with their values in the body of the specialized \lstinline{letrec}.
   \item If the lookup is empty, no specialization is performed. Otherwise, it performs substitution of the constant arguments with their values inside of the provided \lstinline{letrec} body.
+  \item The result of the function is the specialized body of the \lstinline{letrec}.
 \end{enumerate}
 
-Let's consider the following example:
+\begin{figure}
+%
+\begin{definition}
+%
+Function computing the "constant arguments" of a \lstinline{letrec}
+%
+\begin{holthmenv}
+  \HOLthm[def,width=85]{pure_letrec_spec_cexp.const_call_args_def}
+\end{holthmenv}
+%
+\end{definition}
+%
+\caption{\lstinline{const_call_args} function implementation}
+\label{fig:const_call_args_implementation}
+\end{figure}
+
+Considering the following example:
 
 \begin{lstlisting}
 letrec sum_map_to = \n -> \f -> case n of
@@ -110,7 +127,7 @@ in
 
 The specialization algorithm will:
 \begin{enumerate}
-  \item Search the body of \lstinline{sum_map_to} for constant arguments. In this case, it will find that \lstinline{f} is a "constant argument" and n is not. This is because \lstinline{f} is only called with itself in recursive calls, whereas \lstinline{n} is called with \lstinline{f} and \lstinline{n - 1}.
+  \item Search the body of \lstinline{sum_map_to} for constant arguments. In this case, it will find that \lstinline{f} is a "constant argument" and \lstinline{n} is not. This is because \lstinline{f} is only positionally called as itself in recursive calls, whereas \lstinline{n} is called as \lstinline{n - 1}.
   \item It will then compute a lookup for the constant arguments. In this case, it will be \lstinline{[f -> (\x -> x + 1)]}.
   \item Finally, it will substitute the constant arguments with their values.
 \end{enumerate}

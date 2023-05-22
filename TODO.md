@@ -1,14 +1,15 @@
 # TODOs
 
 General:
-- Expand the thesis to make it longer and more comprehensive overall.
-- Expand Chapter 5 (Results chapter).
+<!-- - Expand the thesis to make it longer and more comprehensive overall. -->
+<!-- - Expand Chapter 5 (Results chapter). -->
 <!-- - Review and revise the final chapter to make it less "bullet point"-like and more substantial. -->
 
 Proofs:
 <!-- - Add more explanation and text to the proof in the theorem proved by induction on subst_rel. Describe the interesting cases, crucial properties, and relevant helper definitions/lemmas. -->
-- Similarly, provide a more detailed explanation of the significance of Theorem 7. (deep_subst_rel t u ⇒ t =~ u)
-- In the new implementation chapter, provide more information about the proofs.
+<!-- - Similarly, provide a more detailed explanation of the significance of Theorem 7. (deep_subst_rel t u ⇒ t =~ u) -->
+<!-- - In the new implementation chapter, provide more information about the proofs. -->
+<!-- - Expand the specialization explanation -->
 
 New explanations:
 <!-- - Include explanations of exp_eq and congruences for it in the Background chapter, under PureCake, ensuring it is understandable to outsiders. -->
