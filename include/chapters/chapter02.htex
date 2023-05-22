@@ -236,7 +236,9 @@ That is for any \lstinline{v, x, t, u}, if \lstinline{x} can be inlined for \lst
 
 The proof of this theorem is quite long and constitutes a big part of the work on this project. The following is a brief explanation of the proof.
 
-The whole proof was done by induction on the \lstinline{subst_rel} relation. The strategy used in most non-trivial cases was to first push down the \lstinline{Let} constructor into every branch of the expression tree. This was done so that the subtrees will match the inductive hypotheses. Then use the congruence rule for that type of expression to reduce the proof case to having to prove the equivalence of said subtrees. Finally, use the induction hypothesis to prove the equivalence of the subtrees. More specifically, for the \lstinline{App} case, the proof is as follows. The sequent for the case looks like the following.
+The whole proof was done by induction on the \lstinline{subst_rel} relation. The strategy used in most non-trivial cases was to first push down the \lstinline{Let} constructor into every branch of the expression tree. This was done so that the subtrees will match the inductive hypotheses. Then use the congruence rule for that type of expression to reduce the proof case to having to prove the equivalence of said subtrees. Finally, use the induction hypothesis to prove the equivalence of the subtrees.
+
+For example, starting with the original sequent for the \lstinline{App} case:
 
 \begin{lstlisting}[escapeinside={(*}{*)}]
 0.  subst_rel v x t u
@@ -247,6 +249,8 @@ The whole proof was done by induction on the \lstinline{subst_rel} relation. The
 ------------------------------------
     Let v x (App t t') (*\expeq*) Let v x (App u u')
 \end{lstlisting}
+
+This is how a single subgoal is presented in the HOL4 interactive terminal. The numbered lines are the assumptions and the last line is the goal. 
 
 The first step is to push down the \lstinline{Let} constructor into every subtree of the \lstinline{App} constructor. This is done by using the following theorem:
 

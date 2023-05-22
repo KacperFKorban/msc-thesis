@@ -18,6 +18,8 @@ New explanations:
 Derivation trees: (revisit)
 <!-- - Consider presenting the derivation tree as a bullet point list, including the steps of the proof and relevant rules used. -->
 
+Other changes:
+- Check if I can use the PureCake graphic
 
 Used HOL definitions:
 <!-- - MEM -->

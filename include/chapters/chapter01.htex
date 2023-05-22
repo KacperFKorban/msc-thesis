@@ -87,8 +87,8 @@ Several definitions are used in the proofs for this project that should be famil
   \item \lstinline{exp_of} -- a function that returns the expression corresponding to a compiler-level expression. There is no inverse function that returns the compiler-level expression corresponding to a meta-theory level expression.
 \end{itemize}
 
-\subsection{PureCake Expression Equivalence}
-\label{background:purecake:purecake_expression_equivalence}
+\subsection{PureLang Expression Equivalence}
+\label{background:purecake:purelang_expression_equivalence}
 %
 
 Before explaining the notion of expression equivalence, it is necessary to explain the notion of weak-head evaluation. Weak-head evaluation is a form of evaluation that only reduces to the outermost constructor or closure. For example, the following expression (where \lstinline{Const} is a constructor):

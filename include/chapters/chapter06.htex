@@ -10,19 +10,19 @@ This chapter provides a top-level summary of the completed work as well as thoug
 
 As a result of this project, several significant milestones were accomplished:
 
-Firstly, an inlining pass for PureCake was implemented. The versatility of this pass lies in it being heuristic-agnostic, allowing for the application of any inlining strategy and thus offering considerable scope for future optimization. This implementation also accommodates the use of specialization making it easy to incorporate into the pass.
+Firstly, an inlining pass for PureCake was implemented. The pass was implemented using the first intermediate language -- PureLang. The design of this pass is heuristic-agnostic, allowing it to be used with any inlining strategy. This makes the implementation open for future improvements without changing the overall implementation. This implementation also accommodates the use of specialization making it easy to incorporate into the pass.
 
-Additionally, a correctness proof for the inlining transformation, which is independent of the implementation, was defined and proven correct. This proof shows that any inlining pass that satisfies the same transformation schema preserves the semantics of the input program. It applies universally to any inlining pass implementation that satisfies the same transformation schema. This approach is advantageous as it allows for the proof to remain relevant and reusable even if the implementation changes.
+Secondly, a correctness proof for the inlining transformation, which is independent of the implementation, was defined and proven correct. This proof shows that any inlining pass that satisfies the same transformation schema preserves the semantics of the input program. It can be applied universally to any inlining pass implementation that follows the same syntactic transformations. This approach provides an advantage in allowing for the proof to remain relevant and reusable even if the implementation changes.
 
-A noteworthy achievement was the successful proof of a correctness theorem for the specific inlining pass implementation. This result gives the guarantee that the implementation is safe to use, as it does not alter the semantics of the input program.
+A noteworthy milestone was the successful proof of a correctness theorem for the specific inlining pass implementation. This result gives the guarantee that the implementation is safe to use, as it does not alter the semantics of the input program.
 
-Lastly, the project saw the successful development of an unverified function specialization pass. The implementation and correctness proof of the inlining pass readily accommodates the use of this function specialization transformation. Furthermore, the verification methodology employed in this project paves the way for the function specialization pass to be proven.
+Lastly, the project saw the successful development of an unverified \lstinline{letrec} specialization pass. The implementation and correctness proof of the inlining pass already accommodates the use of this function specialization transformation. Furthermore, the verification methodology employed in this project paves the way for the function specialization pass to be proven correct.
 
 \section{Related Work}
 \label{conclusions:related_work}
 %
 
-Verified compilation has been getting more and more traction recently, so there are quite a few verified optimizing compilers out there. The most famous of all CompCert \cite{compcert} implements multiple optimization passes, one of which is function inlining. However, the main difference between CompCert's function inlining is that it is done for an imperative language, that only supports top-level function declarations. 
+The topic of verified compilation has been getting more and more traction recently, so there are quite a few verified optimizing compilers out there. The most famous of all CompCert \cite{compcert} implements multiple optimization passes, one of which is function inlining. However, the main difference between CompCert's function inlining is that it is done for an imperative language, that only supports top-level function declarations. 
 
 Another well-known verified compiler is CakeML, which is a verified compiler for an ML-like, impure, eagerly evaluated, functional language. PureCake uses CakeML as a back-end, to generate machine code. CakeML being an optimizing compiler has its implementation of function inlining \cite{cakemlinlining}. Though the main difference with this work is that CakeML is still an impure and eagerly-evaluated language.
 
