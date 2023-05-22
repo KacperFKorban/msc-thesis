@@ -7,6 +7,8 @@ report.log
 report.lot
 report.out
 report.toc
+heap
+munge.exe
 _minted-report/
 
 !figure/**/*.pdf
