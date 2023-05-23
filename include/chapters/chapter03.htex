@@ -8,13 +8,13 @@ This chapter continues the approach described in Section \ref{verified_inlining_
 \label{verified_implementation_of_inlining:implementation}
 %
 
-The implementation of the inlining pass follows the same pattern as the multi-inlining relation. It transforms the expression based on the given declarations. The implementation is shown in Figure \ref{fig:inline_function_implementation}. It is worth reminding that the implementation of the transformation uses different types of expressions than the relation-level proofs that were described so far. The implementation uses the \lstinline{cexp} type, which contains some additional constructors -- explicit \lstinline{Let}, \lstinline{Case} and currently unused \lstinline{NestedCase}. The bridge that connects those two types of expressions is a function \lstinline{exp_of} that transforms compiler expressions into PureLang expressions.
+The implementation of the inlining pass follows the same pattern as the multi-inlining relation. It transforms the expression based on the given declarations. The implementation is shown in Figure \ref{fig:inline_function_implementation}. It is worth reminding that the implementation of the transformation uses different types of expressions than the relation-level proofs that were described so far. The implementation uses the \keyword{cexp} type, which contains some additional constructors --- explicit \keyword{Let}, \keyword{Case} and currently unused \keyword{NestedCase}. The bridge that connects those two types of expressions is a function \keyword{exp_of} that transforms compiler expressions into PureLang expressions.
 
 \begin{figure}
 %
 \begin{definition}
 %
-\lstinline{inline} function implementation
+\keyword{inline} function implementation
 %
 \begin{holthmenv}
   \HOLthm[def,width=85]{pure_inline_cexp.inline_def}
@@ -22,36 +22,36 @@ The implementation of the inlining pass follows the same pattern as the multi-in
 %
 \end{definition}
 %
-\caption{\lstinline{inline} function implementation}
+\caption{\keyword{inline} function implementation}
 \label{fig:inline_function_implementation}
 \end{figure}
 
-The \lstinline{inline} function takes:
+The \keyword{inline} function takes:
 
 \begin{enumerate}
-  \item \lstinline{m} -- the map of declarations to be inlined.
-  \item \lstinline{ns} -- the set of names to avoid when freshening variables.
-  \item \lstinline{h} -- the heuristic function that decides whether a declaration is fit to be inlined.
+  \item \keyword{m} --- the map of declarations to be inlined.
+  \item \keyword{ns} --- the set of names to avoid when freshening variables.
+  \item \keyword{h} --- the heuristic function that decides whether a declaration is fit to be inlined.
   \item Lastly, the expression to be transformed.
 \end{enumerate}
 
-The need for passing the set of names might be surprising since the input to the function is already freshened. The reason for that is that when inlining an expression, it might be valuable to continue inlining inside the inserted definition body. Then the names of the variables in the body might clash with the names in \lstinline{m}. And so the inserted body has to be freshened again. This isn't done in the current implementation of the pass, so it serves as a preparation for future improvements.
+The need for passing the set of names might be surprising since the input to the function is already freshened. The reason for that is that when inlining an expression, it might be valuable to continue inlining inside the inserted definition body. Then the names of the variables in the body might clash with the names in \keyword{m}. And so the inserted body has to be freshened again. This isn't done in the current implementation of the pass, so it serves as a preparation for future improvements.
 
 The implementation follows quite closely the same pattern as the multi-inlining relation.
 
 \begin{itemize}
-  \item \lstinline{Var} case inlines the variable if it is in the map. It also prevents inlining if the expression to be inserted is a lambda abstraction. It is based on the reasoning presented before, there is no benefit from inlining a lambda that is not immediately applied to at least one argument.
-  \item \lstinline{App} case handles inlining in the function and the argument. It is slightly more interesting than the corresponding case in the relation. This case also handles inlining lambda abstractions, since if the callee is a variable reference, it is certain at this point that it will be called with at least one argument.
-  \item \lstinline{Let} case handles adding more declarations to the map. It is worth noting that the heuristic is checked at the point of adding the declaration to the map, instead of at the point of inlining.
-  \item \lstinline{Letrec} case behaves similarly to the \lstinline{Let} case. It only adds non-mutually recursive declarations to the map of inline declarations.
-  \item The rest of the cases simply traverse its children and perform inlining deeper. With one exception, \lstinline{NestedCase} is not affected by the transformation. That is because PureCake doesn't support nested cases at present.
+  \item \keyword{Var} case inlines the variable if it is in the map. It also prevents inlining if the expression to be inserted is a lambda abstraction. It is based on the reasoning presented before, there is no benefit from inlining a lambda that is not immediately applied to at least one argument.
+  \item \keyword{App} case handles inlining in the function and the argument. It is slightly more interesting than the corresponding case in the relation. This case also handles inlining lambda abstractions, since if the callee is a variable reference, it is certain at this point that it will be called with at least one argument.
+  \item \keyword{Let} case handles adding more declarations to the map. It is worth noting that the heuristic is checked at the point of adding the declaration to the map, instead of at the point of inlining.
+  \item \keyword{Letrec} case behaves similarly to the \keyword{Let} case. It only adds non-mutually recursive declarations to the map of inline declarations.
+  \item The rest of the cases simply traverse its children and perform inlining deeper. With one exception, \keyword{NestedCase} is not affected by the transformation. That is because PureCake doesn't support nested cases at present.
 \end{itemize}
 
 Using this declaration, a final function was defined that is correctly initialized and hides all the implementation details.
 
 \begin{definition}
 %
-\lstinline{inline_all} function implementation
+\keyword{inline_all} function implementation
 %
 \begin{holthmenv}
   \HOLthm[def]{pure_inline_cexp.inline_all_def}
@@ -67,24 +67,24 @@ Using the multi-inlining relation, a theorem was formulated and proved that show
 
 \begin{theorem}
 %
-\lstinline{inline} function correctness theorem
+\keyword{inline} function correctness theorem
 \begin{holthmenv}
   \HOLthm[width=80]{pure_inline_cexpProof.inline_cexp_list_subst_rel_specialized}
 \end{holthmenv}
 %
 \end{theorem}
 
-This theorem is defined for any \lstinline{m, ns, h, e} so it is heuristic-agnostic -- the correctness of the implementation doesn't depend on the heuristic. The assumptions are quite similar to the ones for the equivalence of the relation. The function \lstinline{exp_of} is the link between the two ASTs, it transforms the compiler expressions into PureLang expressions.
+This theorem is defined for any \keyword{m, ns, h, e} so it is heuristic-agnostic --- the correctness of the implementation doesn't depend on the heuristic. The assumptions are quite similar to the ones for the equivalence of the relation. The function \keyword{exp_of} is the link between the two ASTs, it transforms the compiler expressions into PureLang expressions.
 
 \begin{itemize}
-  \item \lstinline{memory_inv} is a new addition. The relation used a simple linked list for the declaration storage. The implementation uses a map, to be more efficient. This assumption ensures that the contents of the map and the list are the same.
-  \item \lstinline{map_ok} is an artifact of using the specific map implementation.
+  \item \keyword{memory_inv} is a new addition. The relation used a simple linked list for the declaration storage. The implementation uses a map, to be more efficient. This assumption ensures that the contents of the map and the list are the same.
+  \item \keyword{map_ok} is an artifact of using the specific map implementation.
   \item All the other assumptions give the same guarantees as the ones for the relation-level proof.
 \end{itemize}
 
-The proof of this theorem uses the induction theorem from the definition of the \lstinline{inline} function. The approach for every case of the proof follows the same pattern, which is to just follow the implementation and for every code branch, instantiate the \lstinline{list_subst_rel} relation with the appropriate constructor.
+The proof of this theorem uses the induction theorem from the definition of the \keyword{inline} function. The approach for every case of the proof follows the same pattern, which is to just follow the implementation and for every code branch, instantiate the \keyword{list_subst_rel} relation with the appropriate constructor.
 
-For example, the sequent for the \lstinline{Var} case after expanding the definition of \lstinline{inline} is:
+For example, the sequent for the \keyword{Var} case after expanding the definition of \keyword{inline} is:
 
 \begin{lstlisting}
 0.  memory_inv xs m
@@ -99,7 +99,7 @@ For example, the sequent for the \lstinline{Var} case after expanding the defini
     list_subst_rel xs (exp_of (Var a v)) (exp_of t)
 \end{lstlisting}
 
-Next, the proof splits on the value of \lstinline{lookup m v}. The \lstinline{NONE} case is immediately solved by the \lstinline{list_subst_rel_refl} constructor. The sequent for the \lstinline{SOME} part is as follows:
+Next, the proof splits on the value of \keyword{lookup m v}. The \keyword{NONE} case is immediately solved by the \keyword{list_subst_rel_refl} constructor. The sequent for the \keyword{SOME} part is as follows:
 
 \begin{lstlisting}
 0.  memory_inv xs m
@@ -114,7 +114,7 @@ Next, the proof splits on the value of \lstinline{lookup m v}. The \lstinline{NO
     list_subst_rel xs (exp_of (Var a v)) (exp_of t)
 \end{lstlisting}
 
-And so the proof splits on the value of \lstinline{x}. And this time the \lstinline{cRec} case is immediately solved by the \lstinline{list_subst_rel_refl} constructor. Then, after the split on the value of \lstinline{is_Lam e}, the \lstinline{list_subst_rel_refl} constructor solves the positive case. The sequent for the negative case is as follows:
+And so the proof splits on the value of \keyword{x}. And this time the \keyword{cRec} case is immediately solved by the \keyword{list_subst_rel_refl} constructor. Then, after the split on the value of \keyword{is_Lam e}, the \keyword{list_subst_rel_refl} constructor solves the positive case. The sequent for the negative case is as follows:
 
 \begin{lstlisting}[escapeinside={(*}{*)}]
 0.  {explode a | (*\exsts*)e. lookup m a = SOME e} = set (MAP FST xs)
@@ -126,7 +126,7 @@ And so the proof splits on the value of \lstinline{x}. And this time the \lstinl
     list_subst_rel xs (Var (explode v)) (exp_of c)
 \end{lstlisting}
 
-This matches exactly the \lstinline{list_subst_rel_VarSimp} constructor. After applying it and expanding some assumptions, the proof is complete.
+This matches exactly the \keyword{list_subst_rel_VarSimp} constructor. After applying it and expanding some assumptions, the proof is complete.
 
 A similar approach applies to the rest of the cases.
 
@@ -135,11 +135,11 @@ Finally, the correctness of the full inlining pass was proved by using the above
 \begin{theorem}
 \label{theorem:inline_all_thm}
 %
-Correctness theorem for the \lstinline{inline_all} function
+Correctness theorem for the \keyword{inline_all} function
 \begin{holthmenv}
   \HOLthm[width=80]{pure_inline_cexpProof.inline_all_thm}
 \end{holthmenv}
 %
 \end{theorem}
 
-Similarly to the relation-level proof, this theorem is defined for any expression that satisfies \lstinline{no_shadowing} and is closed.
+Similarly to the relation-level proof, this theorem is defined for any expression that satisfies \keyword{no_shadowing} and is closed.

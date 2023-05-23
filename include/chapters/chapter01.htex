@@ -14,7 +14,7 @@ HOL4 uses Standard ML as an interaction language, so defining datatypes, functio
 
 Proving theorems is done by combining sequences of higher-level combinators. Those combinators allow performing different types of rewrites on the assumptions and the goal. The most common tactics are the ones that allow for rewriting the goal using a given definition or theorem. Some common combinators allow for performing induction or case analysis on a term. Other noteworthy combinators match either the goal or the assumptions against a given theorem statement and give a specialized version of the theorem.
 
-The interaction with HOL is mostly done via IDE plugins for Vim, Emacs and VSCode. The plugins allow for the management of the goal stack -- the stack of currently active proofs. They also make the process of developing proofs more interactive, by allowing the developer to incrementally apply tactics to the sequent.
+The interaction with HOL is mostly done via IDE plugins for Vim, Emacs and VSCode. The plugins allow for the management of the goal stack --- the stack of currently active proofs. They also make the process of developing proofs more interactive, by allowing the developer to incrementally apply tactics to the sequent.
 
 \subsection{HOL4 Specific Definitions}
 \label{background:hol4_specific_definitions}
@@ -23,10 +23,10 @@ The interaction with HOL is mostly done via IDE plugins for Vim, Emacs and VSCod
 The syntax of HOL4 is not necessary to understand the work done in this project since the theorems and definitions are shown in a mathematical notation. However, some HOL4-specific definitions and datatypes are used in the project, so it is worth explaining them.
 
 \begin{itemize}
-  \item \lstinline{LIST_REL R xs ys} -- a predicate that defines a relation between two lists. It is true if the two lists \lstinline{xs, ys} are of the same length and the corresponding elements are related by the given relation \lstinline{R}.
-  \item \lstinline{DISJOINT s1 s2} -- a predicate between two sets. It is true if the two sets \lstinline{s1, s2} are disjoint.
-  \item \lstinline{MEM x xs} -- a membership predicate between an element \lstinline{x} and a list \lstinline{xs}. It is true if the element \lstinline{x} is in the list \lstinline{xs}.
-  \item \lstinline{MAP2 f xs ys} -- a function that takes a function \lstinline{f} and two lists \lstinline{xs, ys} and applies the function to the corresponding elements of the two lists. It returns a list of the results.
+  \item \keyword{list_rel R xs ys} --- a predicate that defines a relation between two lists. It is true if the two lists \keyword{xs, ys} are of the same length and the corresponding elements are related by the given relation \keyword{R}.
+  \item \keyword{disjoint s1 s2} --- a predicate between two sets. It is true if the two sets \keyword{s1, s2} are disjoint.
+  \item \keyword{mem x xs} --- a membership predicate between an element \keyword{x} and a list \keyword{xs}. It is true if the element \keyword{x} is in the list \keyword{xs}.
+  \item \keyword{map2 f xs ys} --- a function that takes a function \keyword{f} and two lists \keyword{xs, ys} and applies the function to the corresponding elements of the two lists. It returns a list of the results.
 \end{itemize}
 
 \section{PureCake}
@@ -35,7 +35,7 @@ The syntax of HOL4 is not necessary to understand the work done in this project 
 
 PureCake is a verified compiler for a pure, lazy, functional programming language. It uses a Haskell-like syntax and type system. PureCake produces CakeML code, which allows for its compilation to be verified from the source to the machine code.
 
-PureCake compilation pipeline consists of four intermediate languages. The overview of the compiler architecture is presented in Figure \ref{fig:purecake}. For this project, the relevant language is the one used in the front end -- PureLang. PureCake differentiates between the compiler language and the language used for transformation proofs. The declaration of the abstract syntax tree for the meta-theory level language is as follows:
+PureCake compilation pipeline consists of four intermediate languages. The overview of the compiler architecture is presented in Figure \ref{fig:purecake}. For this project, the relevant language is the one used in the front end --- PureLang. PureCake differentiates between the compiler language and the language used for transformation proofs. The declaration of the abstract syntax tree for the meta-theory level language is as follows:
 
 \begin{figure}[t]
   \scalebox{0.75}{
@@ -92,7 +92,7 @@ PureCake compilation pipeline consists of four intermediate languages. The overv
 
       % pure -> pure
       \draw[->] ([yshift=-3mm]pure.north east) to node (split) [lab]
-        {split \lstinline{letrec}s; simplify}
+        {split \keyword{letrec}s; simplify}
       ([yshift=-9mm]pure.north east);
       \draw[->] ([yshift=4.5mm, xshift=3.6mm]pure.east) to [out=0,in=0] node (type) [lab]
         {type inference}
@@ -102,23 +102,23 @@ PureCake compilation pipeline consists of four intermediate languages. The overv
       ([yshift=-21mm]pure.north east);
       \draw[->] ([yshift=-22.5mm]pure.north east) to node (demand) [lab]
         {demand analysis \\[-1mm]
-        annotates with \lstinline{seq}s}
+        annotates with \keyword{seq}s}
       ([yshift=-28.5mm]pure.north east);
 
       % pure -> thunk
       \draw[->={1.5}] ([yshift=1mm]pure.south east) to node (tothunk) [lab]
         {translate into call-by-value; \\[-1mm]
-        introduce \lstinline{delay}/\lstinline{force}; \\[-1mm]
-        avoid \lstinline{delay (force (var _))}}
+        introduce \keyword{delay}/\keyword{force}; \\[-1mm]
+        avoid \keyword{delay (force (var _))}}
       ([yshift=-9mm]thunk.north east);
 
       % thunk -> thunk
       \draw[->] ([yshift=-12mm]thunk.north east) to node [lab]
         {lift $\lambda$-abstractions out \\[-1mm]
-        of \lstinline{let}s/\lstinline{letrec}s}
+        of \keyword{let}s/\keyword{letrec}s}
       ([yshift=-18mm]thunk.north east);
       \draw[->] ([yshift=-21mm]thunk.north east) to node (thunktothunk) [lab]
-        {simplify \lstinline{force} expressions}
+        {simplify \keyword{force} expressions}
       ([yshift=-27mm]thunk.north east);
 
       % thunk -> env
@@ -129,13 +129,13 @@ PureCake compilation pipeline consists of four intermediate languages. The overv
 
       % env -> state
       \draw[->={1.8}] ([yshift=7mm]env.south east) to node (tostate) [lab]
-        {compile \lstinline{delay}/\lstinline{force} and \\[-1mm]
-        \lstinline{IO} monad to stateful ops}
+        {compile \keyword{delay}/\keyword{force} and \\[-1mm]
+        \keyword{IO} monad to stateful ops}
       ([yshift=-1mm]state.north east);
 
       % state -> state
       \draw[->] ([yshift=-3mm]state.north east) to node (pushunit) [lab]
-        {push $\underline{\hspace{1.2ex}} \cdot$ \lstinline{unit} inwards}
+        {push $\underline{\hspace{1.2ex}} \cdot$ \keyword{unit} inwards}
       ([yshift=-9mm]state.north east);
       \draw[->] ([yshift=-11mm]state.north east) to node (lamnames) [lab]
         {make every $\lambda$-abstraction \\[-1mm]
@@ -168,8 +168,8 @@ PureCake compilation pipeline consists of four intermediate languages. The overv
         of semantics-preserving syntactic relations};
       \node (commtostate) [comm={tostate},yshift=7mm]
         {proof composed of three relations: \\[-1mm]
-        ~~1. implement \lstinline{IO} monad statefully \\[-1mm]
-        ~~2. implement \lstinline{delay}/\lstinline{force} statefully \\[-1mm]
+        ~~1. implement \keyword{IO} monad statefully \\[-1mm]
+        ~~2. implement \keyword{delay}/\keyword{force} statefully \\[-1mm]
         ~~3. tidy the result};
       \draw[dashed,-stealth,gray] ([yshift=-3mm]commtostate.north west) -- ([xshift=-13mm,yshift=-3mm]tostate.north east);
       \node (commpushunit) [comm={pushunit},yshift=-2mm]
@@ -200,9 +200,9 @@ PureLang expressions
 %  
 \end{definition}
 
-The \lstinline{App}, \lstinline{Lam} and \lstinline{Var} constructors are respectively used for function application, lambda abstraction and variable reference. They should be familiar to any reader familiar with lambda calculus. \lstinline{Prim} is used for performing primitive operations. Lastly, the \lstinline{Letrec} constructor is a special kind of let binding, that is allowed to be recursive.
+The \keyword{App}, \keyword{Lam} and \keyword{Var} constructors are respectively used for function application, lambda abstraction and variable reference. They should be familiar to any reader familiar with lambda calculus. \keyword{Prim} is used for performing primitive operations. Lastly, the \keyword{Letrec} constructor is a special kind of let binding, that is allowed to be recursive.
 
-An additional thing of note is that the meta-theory level language does not have a constructor for \lstinline{Let}. Non-recursive \lstinline{Let} bindings are expressed as a combination of \lstinline{Lam} and \lstinline{App}. The following shows the original and translated version of the same expression:
+An additional thing of note is that the meta-theory level language does not have a constructor for \keyword{Let}. Non-recursive \keyword{Let} bindings are expressed as a combination of \keyword{Lam} and \keyword{App}. The following shows the original and translated version of the same expression:
 
 \begin{lstlisting}
 let x = e1 in e2
@@ -223,9 +223,9 @@ Compiler-level language expressions
 
 The constructors are the same as the ones for the meta-theory level language, with small differences:
 \begin{itemize}
-  \item \lstinline{App} and \lstinline{Lam} can take multiple arguments/parameters respectively.
-  \item \lstinline{Let} is added as a constructor.
-  \item \lstinline{Case} and \lstinline{NestedCase} constructors are added for pattern matching. For the meta-theory level language, pattern matching is translated into a combination of primitive equality checks and non-recursive bindings.
+  \item \keyword{App} and \keyword{Lam} can take multiple arguments/parameters respectively.
+  \item \keyword{Let} is added as a constructor.
+  \item \keyword{Case} and \keyword{NestedCase} constructors are added for pattern matching. For the meta-theory level language, pattern matching is translated into a combination of primitive equality checks and non-recursive bindings.
 \end{itemize}
 
 \subsection{PureLang Definitions and Related Terms}
@@ -235,17 +235,17 @@ The constructors are the same as the ones for the meta-theory level language, wi
 Several definitions are used in the proofs for this project that should be familiar to anyone with a background in compilers and programming languages. This section defines those terms and explains their meaning in the context of PureLang.
 
 \begin{itemize}
-  \item \lstinline{freevars} -- a function that returns the set of free variables in an expression. A variable is free if it is not bound by a lambda abstraction or a \lstinline{letrec} binding. This function is defined for the meta-theory level language.
-  \item \lstinline{boundvars} -- a function that returns the set of bound variables in an expression. This function is also defined for the meta-theory level language.
-  \item \lstinline{closed} -- a predicate that returns true if an expression is closed, i.e. it has no free variables. This predicate is defined for the meta-theory level language.
-  \item \lstinline{exp_of} -- a function that returns the expression corresponding to a compiler-level expression. There is no inverse function that returns the compiler-level expression corresponding to a meta-theory level expression.
+  \item \keyword{freevars} --- a function that returns the set of free variables in an expression. A variable is free if it is not bound by a lambda abstraction or a \keyword{letrec} binding. This function is defined for the meta-theory level language.
+  \item \keyword{boundvars} --- a function that returns the set of bound variables in an expression. This function is also defined for the meta-theory level language.
+  \item \keyword{closed} --- a predicate that returns true if an expression is closed, i.e. it has no free variables. This predicate is defined for the meta-theory level language.
+  \item \keyword{exp_of} --- a function that returns the expression corresponding to a compiler-level expression. There is no inverse function that returns the compiler-level expression corresponding to a meta-theory level expression.
 \end{itemize}
 
 \subsection{PureLang Expression Equivalence}
 \label{background:purecake:purelang_expression_equivalence}
 %
 
-Before explaining the notion of expression equivalence, it is necessary to explain the notion of weak-head evaluation. Weak-head evaluation is a form of evaluation that only reduces to the outermost constructor or closure. For example, the following expression (where \lstinline{Const} is a constructor):
+Before explaining the notion of expression equivalence, it is necessary to explain the notion of weak-head evaluation. Weak-head evaluation is a form of evaluation that only reduces to the outermost constructor or closure. For example, the following expression (where \keyword{Const} is a constructor):
 
 \begin{lstlisting}
 (\x -> Const (x + 1)) 3
@@ -267,46 +267,46 @@ But since weak-head evaluation only reduces to the outermost constructor, it doe
 
 Weak-head evaluation is the core of laziness in Haskell and PureCake. Whenever a term is forced in PureCake, it is weak-head evaluated. This way, computations are only evaluated when they are needed.
 
-PureCake defines a notion of expression equivalence for PureLang. This relation is denoted with the name \lstinline{exp_eq} or the infix operator \expeq. This relation is defined using the notion of \lstinline{applicative bisimilarity} -- a notion of equivalence for lambda calculus. It informally states that, if two expressions are related by applicative bisimilarity, then whenever one of them can reduce its outermost redex and produce a weak-head value, the other expression should also be able to perform the same reduction and produce a corresponding weak-head value.
+PureCake defines a notion of expression equivalence for PureLang. This relation is denoted with the name \keyword{exp_eq} or the infix operator \expeq. This relation is defined using the notion of \keyword{applicative bisimilarity} --- a notion of equivalence for lambda calculus. It informally states that, if two expressions are related by applicative bisimilarity, then whenever one of them can reduce its outermost redex and produce a weak-head value, the other expression should also be able to perform the same reduction and produce a corresponding weak-head value.
 
 This relation was not used directly in the proofs for this project. Instead, other lemmas for this relation were used. One such lemma proved as part of the development of this project is the following:
 
 \begin{theorem}
 %
-\lstinline{exp_eq_subst_IMP_exp_eq}
+\keyword{exp_eq_subst_IMP_exp_eq}
 \begin{HOLmath}
   \HOLthm[]{pure_inline.exp_eq_subst_IMP_exp_eq_specialized}
 \end{HOLmath}
 %
 \end{theorem}
 
-This lemma states that for every \lstinline{f} map of expressions to substitute if they cover all the free variables of \lstinline{x} and \lstinline{y} and the results of substituting \lstinline{x} and \lstinline{y} with \lstinline{f} are equivalent, then \lstinline{x} and \lstinline{y} are equivalent.
+This lemma states that for every \keyword{f} map of expressions to substitute if they cover all the free variables of \keyword{x} and \keyword{y} and the results of substituting \keyword{x} and \keyword{y} with \keyword{f} are equivalent, then \keyword{x} and \keyword{y} are equivalent.
 
 A similar lemma also exists for weak head evaluation:
 
 \begin{theorem}
 %
-\lstinline{eval_wh_IMP_exp_eq}
+\keyword{eval_wh_IMP_exp_eq}
 \begin{HOLmath}
   \HOLthm[]{pure_inline.eval_wh_IMP_exp_eq_specialized}
 \end{HOLmath}
 %
 \end{theorem}
 
-This theorem states that for every \lstinline{f} that also satisfies the same free variable condition from above, if \lstinline{x} and \lstinline{y} are equal after weak head evaluation, then \lstinline{x} and \lstinline{y} are equivalent.
+This theorem states that for every \keyword{f} that also satisfies the same free variable condition from above, if \keyword{x} and \keyword{y} are equal after weak head evaluation, then \keyword{x} and \keyword{y} are equivalent.
 
-Another important type of theorem used in expression equivalence proofs is the congruence theorem. Congruence theorems state that composing equivalent expressions gives expressions that are also equivalent. An example of a congruence theorem for the \lstinline{App} constructor is the following:
+Another important type of theorem used in expression equivalence proofs is the congruence theorem. Congruence theorems state that composing equivalent expressions gives expressions that are also equivalent. An example of a congruence theorem for the \keyword{App} constructor is the following:
 
 \begin{theorem}
 %
-\lstinline{exp_eq_App_cong} -- expression equivalence congruence theorem for \lstinline{App}
+\keyword{exp_eq_App_cong} --- expression equivalence congruence theorem for \keyword{App}
 \begin{HOLmath}
   \HOLthm[]{pure_inline.exp_eq_App_cong_specialized}
 \end{HOLmath}
 %
 \end{theorem}
 
-This theorem states that if \lstinline{f} and \lstinline{f'} are equivalent, and \lstinline{e} and \lstinline{e'} are equivalent, then \lstinline{App f e} and \lstinline{App f' e'} are equivalent. Similar theorems are defined for all the other constructors. The congruence theorems are extremely useful for proving the equivalence of complex expressions, as they allow for the proof to be broken down into smaller, more manageable parts.
+This theorem states that if \keyword{f} and \keyword{f'} are equivalent, and \keyword{e} and \keyword{e'} are equivalent, then \keyword{App f e} and \keyword{App f' e'} are equivalent. Similar theorems are defined for all the other constructors. The congruence theorems are extremely useful for proving the equivalence of complex expressions, as they allow for the proof to be broken down into smaller, more manageable parts.
 
 \subsection{PureCake Proof Approach}
 \label{background:purecake:purecake_proof_approach}
@@ -314,14 +314,14 @@ This theorem states that if \lstinline{f} and \lstinline{f'} are equivalent, and
 
 When it comes to proofs, most of the proof logic is decoupled from the implementation functions. That is, instead of verifying specific functions that implement a compiler transformation, relations are defined that capture the core idea of the required transformation. That way the correctness of the syntactic transformation performed by the compiler pass is proved, and whenever the implementation of the compilation phase has to change, the core of the proof stays the same.
 
-For example, let's take a specific compiler transformation -- the transformation that creates fresh variable names for all bound variables in an expression. The steps for designing this compiler transformation are as follows:
+For example, let's take a specific compiler transformation --- the transformation that creates fresh variable names for all bound variables in an expression. The steps for designing this compiler transformation are as follows:
 
 \begin{enumerate}
-  \item Define a relation \lstinline{R} that captures the idea of the transformation. The meaning of this transformation will be: if \lstinline{R e1 e2} holds, then \lstinline{e2} can be the result of freshening variables in \lstinline{e1}.
-  \item Prove that if \lstinline{R e1 e2} holds, then \lstinline{e1} is equivalent to \lstinline{e2}.
-  \item Define the function \lstinline{freshen} that implements the transformation.
-  \item Prove that the function satisfies the relation \lstinline{R}. In other words, prove that \lstinline{R e1 (freshen e1)} holds.
-  \item Use the previous two proofs to prove that \lstinline{e1} is equivalent to \lstinline{freshen e1}.
+  \item Define a relation \keyword{R} that captures the idea of the transformation. The meaning of this transformation will be: if \keyword{R e1 e2} holds, then \keyword{e2} can be the result of freshening variables in \keyword{e1}.
+  \item Prove that if \keyword{R e1 e2} holds, then \keyword{e1} is equivalent to \keyword{e2}.
+  \item Define the function \keyword{freshen} that implements the transformation.
+  \item Prove that the function satisfies the relation \keyword{R}. In other words, prove that \keyword{R e1 (freshen e1)} holds.
+  \item Use the previous two proofs to prove that \keyword{e1} is equivalent to \keyword{freshen e1}.
 \end{enumerate}
 
 This way, the semantic part of the proof stays decoupled from the implementation proof and when the implementation has to be changed, only the last two steps have to be redone.

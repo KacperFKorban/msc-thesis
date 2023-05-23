@@ -10,13 +10,13 @@ This chapter provides a top-level summary of the completed work as well as thoug
 
 As a result of this project, several significant milestones were accomplished:
 
-Firstly, an inlining pass for PureCake was implemented. The pass was implemented using the first intermediate language -- PureLang. The design of this pass is heuristic-agnostic, allowing it to be used with any inlining strategy. This makes the implementation open for future improvements without changing the overall implementation. This implementation also accommodates the use of specialization making it easy to incorporate into the pass.
+Firstly, an inlining pass for PureCake was implemented. The pass was implemented using the first intermediate language --- PureLang. The design of this pass is heuristic-agnostic, allowing it to be used with any inlining strategy. This makes the implementation open for future improvements without changing the overall implementation. This implementation also accommodates the use of specialization making it easy to incorporate into the pass.
 
 Secondly, a correctness proof for the inlining transformation, which is independent of the implementation, was defined and proven correct. This proof shows that any inlining pass that satisfies the same transformation schema preserves the semantics of the input program. It can be applied universally to any inlining pass implementation that follows the same syntactic transformations. This approach provides an advantage in allowing for the proof to remain relevant and reusable even if the implementation changes.
 
 A noteworthy milestone was the successful proof of a correctness theorem for the specific inlining pass implementation. This result gives the guarantee that the implementation is safe to use, as it does not alter the semantics of the input program.
 
-Lastly, the project saw the successful development of an unverified \lstinline{letrec} specialization pass. The implementation and correctness proof of the inlining pass already accommodates the use of this function specialization transformation. Furthermore, the verification methodology employed in this project paves the way for the function specialization pass to be proven correct.
+Lastly, the project saw the successful development of an unverified \keyword{letrec} specialization pass. The implementation and correctness proof of the inlining pass already accommodates the use of this function specialization transformation. Furthermore, the verification methodology employed in this project paves the way for the function specialization pass to be proven correct.
 
 \section{Related Work}
 \label{conclusions:related_work}

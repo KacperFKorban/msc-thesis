@@ -15,7 +15,7 @@ Compilers are critical parts of the software development process. And since we a
 \subsection{Compiler Correctness}
 \label{introduction:compilers:compiler_correctness}
 
-To address the first goal, research into verified compilers is becoming more and more prevalent. The first well-known verified compiler for a non-trivial programming language was CompCert C -- a verified compiler for a subset of the C language. When it comes to functional programming languages, the best-known such compiler is CakeML \cite{cakeml} -- a verified compiler for Standard ML.
+To address the first goal, research into verified compilers is becoming more and more prevalent. The first well-known verified compiler for a non-trivial programming language was CompCert C --- a verified compiler for a subset of the C language. When it comes to functional programming languages, the best-known such compiler is CakeML \cite{cakeml} --- a verified compiler for Standard ML.
 
 \subsection{PureCake}
 \label{introduction:compilers:purecake}
@@ -40,7 +40,7 @@ The goal of this project is to add the function inlining optimization transforma
 \label{introduction:project_goal:function_inlining}
 %
 
-Pure lazy functional languages have the advantage of being easier to argue about thanks to referential transparency. But lazy evaluation can also take a toll on the runtime performance \cite{lazyvseager}. That is why it is crucial to perform more optimizations that will make their performance comparable to eagerly evaluated languages. More specifically in GHC -- the most significant Haskell compiler -- function inlining is one of the most essential optimizations \cite{secretsghc}.
+Pure lazy functional languages have the advantage of being easier to argue about thanks to referential transparency. But lazy evaluation can also take a toll on the runtime performance \cite{lazyvseager}. That is why it is crucial to perform more optimizations that will make their performance comparable to eagerly evaluated languages. More specifically in GHC --- the most significant Haskell compiler --- function inlining is one of the most essential optimizations \cite{secretsghc}.
 
 Function inlining is a transformation that replaces a variable reference with a copy of its definition. For example, for the following expression written in Haskell:
 
@@ -64,4 +64,4 @@ Implementations of optimizations are a major source of bugs in compilers \cite{o
 \label{introduction:thesis_outline}
 %
 
-The report is structured in the following way: Chapter \ref{background} introduces the necessary background to understand the technical aspects of the project. Next, Chapter \ref{verified_inlining_at_the_abstract_level} describes the approach to prove the correctness of the inlining optimization on an abstract level -- using a relation that encapsulates the syntactic transformation. Chapter \ref{verified_implementation_of_inlining} describes the implementation of the inlining optimization pass and the correctness proof of this implementation. Chapter \ref{verified_specialization} describes the approach of accommodating function specialization into the inlining pass and the implementation of the transformation. After that, Chapter \ref{results} describes the results of the project and evaluates them. Finally, Chapter \ref{conclusions} summarises the work done and discusses related work as well as future work.
+The report is structured in the following way: Chapter \ref{background} introduces the necessary background to understand the technical aspects of the project. Next, Chapter \ref{verified_inlining_at_the_abstract_level} describes the approach to prove the correctness of the inlining optimization on an abstract level --- using a relation that encapsulates the syntactic transformation. Chapter \ref{verified_implementation_of_inlining} describes the implementation of the inlining optimization pass and the correctness proof of this implementation. Chapter \ref{verified_specialization} describes the approach of accommodating function specialization into the inlining pass and the implementation of the transformation. After that, Chapter \ref{results} describes the results of the project and evaluates them. Finally, Chapter \ref{conclusions} summarises the work done and discusses related work as well as future work.

@@ -40,7 +40,7 @@ Together those two theorems prove that the inlining pass does not alter the sema
 \label{results:implemented_optimization_pass}
 %
 
-The inlining pass was implemented in HOL4. The implementation is based on the formalization of the inlining relation. The implementation can be split into two distinctive parts: the inlining pass and the specialization function. The inlining pass is the main part of the implementation. It is responsible for traversing the AST and applying the inlining relation to each expression. The specialization transformation is a function that takes a \lstinline{letrec} definition and a list of arguments and returns a specialized version of the definition. This function is used by the inlining pass to create specialized versions of \lstinline{letrec} definitions.
+The inlining pass was implemented in HOL4. The implementation is based on the formalization of the inlining relation. The implementation can be split into two distinctive parts: the inlining pass and the specialization function. The inlining pass is the main part of the implementation. It is responsible for traversing the AST and applying the inlining relation to each expression. The specialization transformation is a function that takes a \keyword{letrec} definition and a list of arguments and returns a specialized version of the definition. This function is used by the inlining pass to create specialized versions of \keyword{letrec} definitions.
 
 There are two versions of the inlining pass: the fully verified version and the partially verified version. The fully verified version doesn't use the specialization transformation. It also doesn't recurse into the inserted expressions, due to the freshening function not being verified. The partially verified version uses both the specialization transformation and the freshening function. It is capable of inlining inside the inserted expressions and of inlining specialized recursive functions.
 
@@ -49,7 +49,7 @@ There are two versions of the inlining pass: the fully verified version and the 
 
 To showcase the capabilities of the inlining pass, a few examples are provided. These examples were transformed using the partially unverified pass. This version of the pass is unverified since it uses both the specialization transformation and the freshening function to inline inside the inserted expressions.
 
-Example 1 -- simple inlining of a constant:
+Example 1 --- simple inlining of a constant:
 
 \begin{lstlisting}
 let x = 7
@@ -63,9 +63,9 @@ let x = 7
 in (\m -> 7)
 \end{lstlisting}
 
-This example shows the simplest case of inlining. The inlining pass simply replaces the variable \lstinline{x} with its value \lstinline{7}.
+This example shows the simplest case of inlining. The inlining pass simply replaces the variable \keyword{x} with its value \keyword{7}.
 
-Example 2 -- transitively inlining let bindings:
+Example 2 --- transitively inlining let bindings:
 
 \begin{lstlisting}
 let f = (\x -> x + 5)
@@ -81,13 +81,13 @@ in let y = (let x = 1 in 1 + 5)
 in 1 + (let x = 1 in 1 + 5)
 \end{lstlisting}
 
-This example shows the inlining of a let binding \lstinline{f} that is used in another let binding \lstinline{y}. The inlining pass first inlines the definition of \lstinline{f}, which in turn creates a new let binding for \lstinline{x}. Both of those bindings are then inlined into the reference of \lstinline{y} in the resulting expression.
+This example shows the inlining of a let binding \keyword{f} that is used in another let binding \keyword{y}. The inlining pass first inlines the definition of \keyword{f}, which in turn creates a new let binding for \keyword{x}. Both of those bindings are then inlined into the reference of \keyword{y} in the resulting expression.
 
 This showcases the inlining pass's ability to inline let bindings transitively. And continue with inlining inside of an inserted expression.
 
-A thing of note in the above example is that the inlining pass paved the way for other optimizations to be applied. In this case, dead code elimination can remove both bindings for \lstinline{x}. This would allow for the constant value to be computed at compile time by yet another optimization pass.
+A thing of note in the above example is that the inlining pass paved the way for other optimizations to be applied. In this case, dead code elimination can remove both bindings for \keyword{x}. This would allow for the constant value to be computed at compile time by yet another optimization pass.
 
-Example 3 -- specialization:
+Example 3 --- specialization:
 
 \begin{lstlisting}
 letrec map = \f -> \lst -> case lst of
@@ -113,6 +113,6 @@ in
     in map foo
 \end{lstlisting}
 
-This example showcases the inlining pass's ability to specialize recursive functions. The inlining pass first inlines the definition of \lstinline{map} into its reference. It then specializes the definition of \lstinline{map} by replacing the argument \lstinline{f} with the specialized version \lstinline{foo}.
+This example showcases the inlining pass's ability to specialize recursive functions. The inlining pass first inlines the definition of \keyword{map} into its reference. It then specializes the definition of \keyword{map} by replacing the argument \keyword{f} with the specialized version \keyword{foo}.
 
-Note that the specialization algorithm only specializes in the definition of \lstinline{map}, without removing the original argument. This optimization of removing unused bindings can be performed by another optimization pass, similar to dead code elimination.
+Note that the specialization algorithm only specializes in the definition of \keyword{map}, without removing the original argument. This optimization of removing unused bindings can be performed by another optimization pass, similar to dead code elimination.

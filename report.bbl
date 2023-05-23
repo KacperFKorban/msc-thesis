@@ -1,13 +1,16 @@
 \begin{thebibliography}{1}
 
 \bibitem{purecake}
-HRUTVIK KANABAR, SAMUEL VIVIEN, OSKAR ABRAHAMSSON, MAGNUS~O MYREEN, MICHAEL
-  NORRISH, JOHANNES~{\AA}MAN POHJOLA, and RICCARDO ZANETTI.
-\newblock Purecake: A verified compiler for a lazy functional.
+Hrutvik Kanabar, Samuel Vivien, Oskar Abrahamsson, Magnus~O. Myreen, Michael
+  Norrish, Johannes Åman Pohjola, and Riccardo Zanetti.
+\newblock {PureCake}: {A} {Verified} {Compiler} for a {Lazy} {Functional}
+  {Language}.
+\newblock In {\em Programming Language Design and Implementation (PLDI)}. ACM,
+  2023.
 
 \bibitem{cakeml}
 Ramana Kumar, Magnus~O. Myreen, Michael Norrish, and Scott Owens.
-\newblock Cakeml: A verified implementation of ml.
+\newblock {CakeML}: {A} {Verified} {Implementation} of {ML}.
 \newblock In {\em Proceedings of the 41st ACM SIGPLAN-SIGACT Symposium on
   Principles of Programming Languages}, POPL '14, page 179–191, New York, NY,
   USA, 2014. Association for Computing Machinery.
@@ -15,25 +18,25 @@ Ramana Kumar, Magnus~O. Myreen, Michael Norrish, and Scott Owens.
 \bibitem{compcert}
 Xavier Leroy, Sandrine Blazy, Daniel K{\"a}stner, Bernhard Schommer, Markus
   Pister, and Christian Ferdinand.
-\newblock Compcert-a formally verified optimizing compiler.
+\newblock {CompCert}-a formally verified optimizing compiler.
 \newblock In {\em ERTS 2016: Embedded Real Time Software and Systems, 8th
   European Congress}, 2016.
 
 \bibitem{cakemlinlining}
-ALEXANDER MIHAJLOVIC.
-\newblock Verifying function inlinining in cakeml.
+Alexander Mihajlovic.
+\newblock Verifying {Function} {Inlinining} in {CakeML}.
 \newblock {MSc.} thesis, 2018.
 
 \bibitem{pilsner}
 Georg Neis, Chung-Kil Hur, Jan-Oliver Kaiser, Craig McLaughlin, Derek Dreyer,
   and Viktor Vafeiadis.
-\newblock Pilsner: A compositionally verified compiler for a higher-order
-  imperative language.
+\newblock Pilsner: A {Compositionally} {Verified} {Compiler} for a
+  {Higher-Order} {Imperative} {Language}.
 \newblock {\em SIGPLAN Not.}, 50(9):166–178, aug 2015.
 
 \bibitem{secretsghc}
 Simon Peyton~Jones and Simon Marlow.
-\newblock Secrets of the glasgow haskell compiler inliner.
+\newblock Secrets of the {Glasgow} {Haskell} {Compiler} inliner.
 \newblock {\em Journal of Functional Programming}, 12(4-5):393–434, 2002.
 
 \bibitem{lazyvseager}
@@ -43,7 +46,7 @@ Nayeong Song.
 
 \bibitem{optimizationbugs}
 Zhide Zhou, Zhilei Ren, Guojun Gao, and He~Jiang.
-\newblock An empirical study of optimization bugs in gcc and llvm.
+\newblock An empirical study of optimization bugs in {GCC} and {LLVM}.
 \newblock {\em Journal of Systems and Software}, 174:110884, 2021.
 
 \end{thebibliography}

@@ -1,15 +1,15 @@
 \section{HOL stuff}
 
-Here is an example on how to use HOL4 terms inline: \HOLtm{\x. x}.
-Here is another example: \HOLtm{REVERSE [1;2;3]}.
+Here is an example on how to use HOL4 terms inline: \keyword{\x. x}.
+Here is another example: \keyword{REVERSE [1;2;3]}.
 Here is how you write out a definition:
 
-Here is an example on how to use HOL4 terms inline: \HOLtm{\x. x}.
-Here is another example: \HOLtm{REVERSE [1;2;3]}.
+Here is an example on how to use HOL4 terms inline: \keyword{\x. x}.
+Here is another example: \keyword{REVERSE [1;2;3]}.
 Here is how you write out a definition:
 
-Here is an example on how to use HOL4 terms inline: \HOLtm{\x. x}.
-Here is another example: \HOLtm{REVERSE [1;2;3]}.
+Here is an example on how to use HOL4 terms inline: \keyword{\x. x}.
+Here is another example: \keyword{REVERSE [1;2;3]}.
 Here is how you write out a definition:
 %
 \begin{HOLmath}

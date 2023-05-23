@@ -61,11 +61,14 @@
 \usepackage{doi}
 \usepackage{microtype}
 \usepackage{tikz}
+% \usepackage{cmbright}
 
 % CODE SNIPPET SETTINGS
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% \fontfamily{cmr}\selectfont
 
 \lstset{frame=tb,
   language=Haskell,
@@ -81,9 +84,11 @@
   stringstyle=\color{mauve},
   breaklines=true,
   breakatwhitespace=true,
-  tabsize=3,
+  tabsize=2,
 	keepspaces=true
 }
+
+\newcommand{\keyword}[1]{\lstinline{#1}}
 
 % TODO-command
 \newcommand{\todoo}[1]{\textcolor{red}{TODO: #1}\PackageWarning{TODO:}{#1!}}
@@ -92,13 +97,23 @@
 \newcommand{\nothing}{\varnothing}
 
 \ebproofnewstyle{small}{
-	separation = 1em, rule margin = .5ex,
+	separation = 1mm, rule margin = 1mm,
 	center = false,
-	template = \footnotesize{\inserttext},
-	left template = \footnotesize{\inserttext},
-	right template = \footnotesize{\inserttext},
-	right label template = \footnotesize\inserttext,
-	left label template = \footnotesize\inserttext
+	template = \footnotesize{\ttfamily\inserttext},
+	left template = \footnotesize{\ttfamily\inserttext},
+	right template = \footnotesize{\ttfamily\inserttext},
+	right label template = \footnotesize\ttfamily\inserttext,
+	left label template = \footnotesize\ttfamily\inserttext
+}
+
+\ebproofnewstyle{smaller}{
+	separation = -5mm, rule margin = 1mm,
+	center = false,
+	template = \footnotesize{\ttfamily\inserttext},
+	left template = \footnotesize{\ttfamily\inserttext},
+	right template = \footnotesize{\ttfamily\inserttext},
+	right label template = \footnotesize\ttfamily\inserttext,
+	left label template = \footnotesize\ttfamily\inserttext
 }
 
 %inlined code command
@@ -152,7 +167,6 @@
 \newcommand{\expdiv}[0]{\Uparrow_{\mathsf{exp}}}
 
 \NewEnviron{holthmenv}{%
-	\fontfamily{cmr}\selectfont
   \[
   \scalebox{1.0}{\begin{array}[t]{l}
   \BODY

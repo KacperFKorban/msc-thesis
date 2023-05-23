@@ -66,9 +66,16 @@ HD 1 hd
 FST 1 fst
 SND 1 snd
 MAP 2 map
-SOME 1 Some
-NONE 0 None
+SOME 4 Some
+NONE 4 None
 IMAGE 2 image
 GENLIST 2 genlist
 DROP 2 drop
 TAKE 2 take
+FDOM 6 domain
+FLOOKUP 6 lookup
+LIST_REL 8 list_rel
+DISJOINT 8 disjoint
+MEM 3 mem
+MAP2 4 map2
+

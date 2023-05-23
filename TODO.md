@@ -44,5 +44,17 @@ Used PureCake definitions introduced in this project:
 Feedback 2:
 - Around Theorem 1, the font used in the surrounding text doesn't match the font used in the theorem. Try using \HOLtm{f} etc.
 - More wrong fonts in Chapter 3.
-- There seems to be typos in the derivation tree just before Section 3.3.1. The conclusion is missing parenthesis.
-- I would have liked the first paragraph (i.e. the "chapter abstract) to be much more upfront that the specialisation pass has not been verified yet. Its verification is left as future work.
+<!-- - There seems to be typos in the derivation tree just before Section 3.3.1. The conclusion is missing parenthesis. -->
+<!-- - I would have liked the first paragraph (i.e. the "chapter abstract) to be much more upfront that the specialisation pass has not been verified yet. Its verification is left as future work. -->
+<!-- - I think every -- you write ought to be a --- -->
+<!-- - You should add to the overrides file mappings to change names to the better, e.g. FDOM  would be more understandable as domain etc. You can do this by adding a line as follows to your overrides file. `FDOM 3 domain` -->
+<!-- - similarly FLOOKUP would be nicer as lookup -->
+<!-- - LIST_REL as list_rel , DISJOINT as disjoint, MEM as mem, MAP2 and map2 -->
+<!-- - NONE should be None -->
+<!-- - SOME should be Some -->
+<!-- - in your tree derivations, the font is different from the fonts used elsewhere in the report -->
+<!-- - it seems that the width is not sufficiently wide for Definition 33 -->
+<!-- - Why did the author names get all caps in ref [1] and [4]? -->
+<!-- - In the references you should protect names like PureCake and CakeML by writing {CakeML} and {PureCake} since otherwise they end up being Cakeml and Purecake. Same with Haskell and GCC and LLVM -->
+- I wonder why all maths is in tt font. I would prefer it in sf font
+- Lowercase LIST_REL etc in text and HOL subgoal snippets
