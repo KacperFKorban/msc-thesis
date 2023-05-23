@@ -2,7 +2,7 @@
 \label{verified_inlining_at_the_abstract_level}
 %
 
-This chapter describes work done on the inlining optimization. It concentrates on the approach to proving the correctness of the inlining transformation on an abstract level. It shows three approaches for defining the correctness relation: a single inlining relation, a deep inlining relation and a multi-inlining relation.
+This chapter describes work done on the inlining optimization. It concentrates on the approach to prove the correctness of the inlining transformation on an abstract level. It shows three approaches for defining the correctness relation: a single inlining relation, a deep inlining relation and a multi-inlining relation.
 
 \section{Goal}
 \label{verified_inlining_at_the_abstract_level:goal}
@@ -814,7 +814,7 @@ The resulting sequent is the following:
 
 This goal matches the inductive hypothesis, making the only thing left to do is some accounting with the assumptions.
 
-The more interesting, cases are those that perform the inlining by inserting new definitions. Inlining both the recursive and nonrecursive expressions uses the same lemma. The lemma is defined as follows:
+The more interesting, cases are those that perform the inlining by inserting new definitions. Inlining both the recursive and nonrecursive expressions uses the same lemma. The lemma is as follows:
 
 \begin{theorem}
 %

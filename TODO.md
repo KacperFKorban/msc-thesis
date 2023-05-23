@@ -40,3 +40,9 @@ Used PureCake definitions introduced in this project:
 - vars_of
 - binds_ok
 - no_shadowing
+
+Feedback 2:
+- Around Theorem 1, the font used in the surrounding text doesn't match the font used in the theorem. Try using \HOLtm{f} etc.
+- More wrong fonts in Chapter 3.
+- There seems to be typos in the derivation tree just before Section 3.3.1. The conclusion is missing parenthesis.
+- I would have liked the first paragraph (i.e. the "chapter abstract) to be much more upfront that the specialisation pass has not been verified yet. Its verification is left as future work.

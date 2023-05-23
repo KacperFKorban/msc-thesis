@@ -2,7 +2,7 @@
 \label{background}
 %
 
-This chapter describes the background necessary to understand the details of the project. Specifically, it provides a small introduction to HOL4, the interactive theorem prover used in the project, and the PureCake compiler, for which the optimization is designed.
+This chapter describes the background necessary to understand the details of the project. Specifically, it provides a short introduction to HOL4, the interactive theorem prover used in the project, and the PureCake compiler, for which the optimization is designed.
 
 \section{HOL4}
 \label{background:hol4}
@@ -23,10 +23,10 @@ The interaction with HOL is mostly done via IDE plugins for Vim, Emacs and VSCod
 The syntax of HOL4 is not necessary to understand the work done in this project since the theorems and definitions are shown in a mathematical notation. However, some HOL4-specific definitions and datatypes are used in the project, so it is worth explaining them.
 
 \begin{itemize}
-  \item \lstinline{LIST_REL} -- a predicate that defines a relation between two lists. It is true if the two lists are of the same length and the corresponding elements are related by the given relation.
-  \item \lstinline{DISJOINT} -- a predicate between two sets. It is true if the two sets are disjoint.
-  \item \lstinline{MEM} -- a membership predicate between an element and a list. It is true if the element is in the list.
-  \item \lstinline{MAP2} -- a function that takes a function and two lists and applies the function to the corresponding elements of the two lists. It returns a list of the results.
+  \item \lstinline{LIST_REL R xs ys} -- a predicate that defines a relation between two lists. It is true if the two lists \lstinline{xs, ys} are of the same length and the corresponding elements are related by the given relation \lstinline{R}.
+  \item \lstinline{DISJOINT s1 s2} -- a predicate between two sets. It is true if the two sets \lstinline{s1, s2} are disjoint.
+  \item \lstinline{MEM x xs} -- a membership predicate between an element \lstinline{x} and a list \lstinline{xs}. It is true if the element \lstinline{x} is in the list \lstinline{xs}.
+  \item \lstinline{MAP2 f xs ys} -- a function that takes a function \lstinline{f} and two lists \lstinline{xs, ys} and applies the function to the corresponding elements of the two lists. It returns a list of the results.
 \end{itemize}
 
 \section{PureCake}
@@ -35,7 +35,7 @@ The syntax of HOL4 is not necessary to understand the work done in this project 
 
 PureCake is a verified compiler for a pure, lazy, functional programming language. It uses a Haskell-like syntax and type system. PureCake produces CakeML code, which allows for its compilation to be verified from the source to the machine code.
 
-PureCake compilation pipeline consists of four intermediate languages. The overview of the compiler architecture is presented in Figure \ref{fig:purecake}. For this project, the relevant language is the one used in the front end -- PureLang. PureCake differentiates between the compiler language and the language used for transformation proofs. The declaration of the abstract syntax tree for the meta-level language is as follows:
+PureCake compilation pipeline consists of four intermediate languages. The overview of the compiler architecture is presented in Figure \ref{fig:purecake}. For this project, the relevant language is the one used in the front end -- PureLang. PureCake differentiates between the compiler language and the language used for transformation proofs. The declaration of the abstract syntax tree for the meta-theory level language is as follows:
 
 \begin{figure}[t]
   \scalebox{0.75}{
@@ -192,8 +192,8 @@ PureCake compilation pipeline consists of four intermediate languages. The overv
 \end{figure}
 
 \begin{definition}
-%  
-Meta-level language expressions
+%
+PureLang expressions
 \begin{HOLmath}
   \HOLthm[]{pure_exp.datatype_exp}
 \end{HOLmath}

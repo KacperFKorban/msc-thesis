@@ -2,13 +2,13 @@
 \label{verified_implementation_of_inlining}
 %
 
-This chapter continues the approach described in Section \ref{verified_inlining_at_the_abstract_level:proof_strategy}. The previous chapter defined the syntactic transformation of multi-inlining and showed that any implementation that the relation follows preserves the semantics of the program. This chapter focuses on the implementation of the inlining pass. It describes the transformation function as well as the correctness proof for the implementation. The correctness proof uses the previously introduces relation and the equivalence theorem proved for it.
+This chapter continues the approach described in Section \ref{verified_inlining_at_the_abstract_level:proof_strategy}. The previous chapter defined the syntactic transformation of multi-inlining and showed that any implementation that the relation follows preserves the semantics of the program. This chapter focuses on the implementation of the inlining pass. It describes the transformation function as well as the correctness proof for the implementation. The correctness proof uses the previously introduces relation and the equivalence theorem proved for the relation.
 
 \section{Implementation}
 \label{verified_implementation_of_inlining:implementation}
 %
 
-The implementation of the inlining pass follows the same pattern as the multi-inlining relation. It transforms the expression based on the given declarations. The implementation is shown in Figure \ref{fig:inline_function_implementation}. It is worth reminding that the implementation of the transformation uses different types of expressions than the meta-level proof that were described so far. The implementation uses the \lstinline{cexp} type, which contains some additional constructors -- explicit \lstinline{Let}, \lstinline{Case} and currently unused \lstinline{NestedCase}. The bridge that connects those two types of expressions is a function \lstinline{exp_of} that transforms compiler expressions into meta-level expressions.
+The implementation of the inlining pass follows the same pattern as the multi-inlining relation. It transforms the expression based on the given declarations. The implementation is shown in Figure \ref{fig:inline_function_implementation}. It is worth reminding that the implementation of the transformation uses different types of expressions than the relation-level proofs that were described so far. The implementation uses the \lstinline{cexp} type, which contains some additional constructors -- explicit \lstinline{Let}, \lstinline{Case} and currently unused \lstinline{NestedCase}. The bridge that connects those two types of expressions is a function \lstinline{exp_of} that transforms compiler expressions into PureLang expressions.
 
 \begin{figure}
 %
@@ -74,7 +74,7 @@ Using the multi-inlining relation, a theorem was formulated and proved that show
 %
 \end{theorem}
 
-This theorem is defined for any \lstinline{m, ns, h, e} so it is heuristic-agnostic -- the correctness of the implementation doesn't depend on the heuristic. The assumptions are quite similar to the ones for the equivalence of the relation. The function \lstinline{exp_of} is the link between the two ASTs, it transforms the compiler expressions into meta-theory ones.
+This theorem is defined for any \lstinline{m, ns, h, e} so it is heuristic-agnostic -- the correctness of the implementation doesn't depend on the heuristic. The assumptions are quite similar to the ones for the equivalence of the relation. The function \lstinline{exp_of} is the link between the two ASTs, it transforms the compiler expressions into PureLang expressions.
 
 \begin{itemize}
   \item \lstinline{memory_inv} is a new addition. The relation used a simple linked list for the declaration storage. The implementation uses a map, to be more efficient. This assumption ensures that the contents of the map and the list are the same.
