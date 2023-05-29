@@ -88,7 +88,7 @@
 	keepspaces=true
 }
 
-\newcommand{\keyword}[1]{\lstinline{#1}}
+\newcommand{\keyword}[1]{\texttt{#1}}
 
 % TODO-command
 \newcommand{\todoo}[1]{\textcolor{red}{TODO: #1}\PackageWarning{TODO:}{#1!}}
@@ -135,6 +135,7 @@
 \newunicodechar{∃}{\ensuremath{\exists}}
 \newcommand{\fall}{\ensuremath{\forall}}
 \newunicodechar{∀}{\ensuremath{\forall}}
+% \newunicodechar{α}{\ensuremath{\alpha}}
 
 % OPTIONAL SETTINGS (DELETE OR COMMENT TO SUPRESS)
 
@@ -145,7 +146,7 @@
 
 % HOL settings
 \renewcommand{\HOLTokenTurnstile}{\ensuremath{\vdash\rule{-0.19em}{0em}}}
-% \renewcommand{\HOLConst}[1]{\textsf{#1}}
+\renewcommand{\HOLConst}[1]{\texttt{#1}}
 \renewcommand{\HOLFieldName}[1]{\textsf{#1}}
 \renewcommand{\HOLSymConst}[1]{\HOLConst{#1}}
 \renewcommand{\HOLTyOp}[1]{\HOLConst{#1}}

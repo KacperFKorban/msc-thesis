@@ -232,7 +232,7 @@ Equivalence of inlining a single definition for \keyword{subst_rel} relation
 %
 \end{theorem}
 
-That is for any \keyword{v, x, t, u}, if \keyword{x} can be inlined for \keyword{v} in \keyword{t} to get \keyword{u}, then \keyword{Let v x t} is equivalent to \keyword{Let v x u}. Worth noticing is that this is specifically true for any \keyword{t, u} where \keyword{t == u}, which essentially means that this theorem shows that the equivalence is true whenever inlining can be performed and does not necessarily have to be performed.
+That is for any \keyword{v}, \keyword{x}, \keyword{t}, \keyword{u}, if \keyword{x} can be inlined for \keyword{v} in \keyword{t} to get \keyword{u}, then \keyword{Let v x t} is equivalent to \keyword{Let v x u}. Worth noticing is that this is specifically true for any \keyword{t}, \keyword{u} where \keyword{t == u}, which essentially means that this theorem shows that the equivalence is true whenever inlining can be performed and does not necessarily have to be performed.
 
 The proof of this theorem is quite long and constitutes a big part of the work on this project. The following is a brief explanation of the proof.
 
@@ -576,7 +576,7 @@ An efficient implementation of an inlining pass can inline multiple expressions 
 \label{fig:multiinlining_relation}
 \end{figure}
 
-For any \keyword{l, t, u}, \keyword{list_subst_rel l t u} expresses that declarations in \keyword{l} can be inlined in \keyword{t} possibly multiple times to get \keyword{u}.
+For any \keyword{l}, \keyword{t}, \keyword{u}, \keyword{list_subst_rel l t u} expresses that declarations in \keyword{l} can be inlined in \keyword{t} possibly multiple times to get \keyword{u}.
 
 This relation is slightly more complicated than the previous ones. But going through the rules:
 
@@ -858,7 +858,7 @@ Other interesting parts of the proof are the cases that introduce new bindings. 
   Binds xs (Let v x x') (*\expeq*) Binds xs (Let v y y')
 \end{lstlisting}
 
-Here assumptions \keyword{1.} and \keyword{3.} are the inductive hypotheses. And because the definition of \keyword{Binds} essentially defines a 'stack' of \keyword{Let}s and \keyword{Letrec}s, assumption \keyword{3.} can be rewritten as follows:
+Here assumptions \keyword{1} and \keyword{3} are the inductive hypotheses. And because the definition of \keyword{Binds} essentially defines a 'stack' of \keyword{Let}s and \keyword{Letrec}s, assumption \keyword{3} can be rewritten as follows:
 
 \begin{lstlisting}[escapeinside={(*}{*)}]
 ...
@@ -873,7 +873,7 @@ Here assumptions \keyword{1.} and \keyword{3.} are the inductive hypotheses. And
 
 From this point, the proof constitutes of the following steps:
 \begin{enumerate}
-  \item Applying the inductive hypothesis from assumption \keyword{3.} to the goal.
+  \item Applying the inductive hypothesis from assumption \keyword{3} to the goal.
   \item Using the \keyword{Binds_Let} theorem to pull the \keyword{Let} definition from inside of the \keyword{Binds}. The theorem is defined as follows:
   \begin{theorem}
   %
@@ -883,7 +883,7 @@ From this point, the proof constitutes of the following steps:
   %
   \end{theorem}
   \item Use the congruence rule for \keyword{Let} to match the goal to the other inductive hypothesis.
-  \item Apply the inductive hypothesis from assumption \keyword{1.} to the goal.
+  \item Apply the inductive hypothesis from assumption \keyword{1} to the goal.
 \end{enumerate}
 
 The proof for the \keyword{list_subst_rel_LetrecIntro} case is very similar, apart from using the appropriate theorems for \keyword{Letrec} instead of \keyword{Let}.

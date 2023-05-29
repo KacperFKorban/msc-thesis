@@ -57,4 +57,4 @@ Feedback 2:
 <!-- - Why did the author names get all caps in ref [1] and [4]? -->
 <!-- - In the references you should protect names like PureCake and CakeML by writing {CakeML} and {PureCake} since otherwise they end up being Cakeml and Purecake. Same with Haskell and GCC and LLVM -->
 - I wonder why all maths is in tt font. I would prefer it in sf font
-- Lowercase LIST_REL etc in text and HOL subgoal snippets
+<!-- - Lowercase LIST_REL etc in text and HOL subgoal snippets -->

@@ -23,19 +23,19 @@ The interaction with HOL is mostly done via IDE plugins for Vim, Emacs and VSCod
 The syntax of HOL4 is not necessary to understand the work done in this project since the theorems and definitions are shown in a mathematical notation. However, some HOL4-specific definitions and datatypes are used in the project, so it is worth explaining them.
 
 \begin{itemize}
-  \item \keyword{list_rel R xs ys} --- a predicate that defines a relation between two lists. It is true if the two lists \keyword{xs, ys} are of the same length and the corresponding elements are related by the given relation \keyword{R}.
-  \item \keyword{disjoint s1 s2} --- a predicate between two sets. It is true if the two sets \keyword{s1, s2} are disjoint.
+  \item \keyword{list_rel R xs ys} --- a predicate that defines a relation between two lists. It is true if the two lists \keyword{xs} \keyword{ys} are of the same length and the corresponding elements are related by the given relation \keyword{R}.
+  \item \keyword{disjoint s1 s2} --- a predicate between two sets. It is true if the two sets \keyword{s1} \keyword{s2} are disjoint.
   \item \keyword{mem x xs} --- a membership predicate between an element \keyword{x} and a list \keyword{xs}. It is true if the element \keyword{x} is in the list \keyword{xs}.
-  \item \keyword{map2 f xs ys} --- a function that takes a function \keyword{f} and two lists \keyword{xs, ys} and applies the function to the corresponding elements of the two lists. It returns a list of the results.
+  \item \keyword{map2 f xs ys} --- a function that takes a function \keyword{f} and two lists \keyword{xs} \keyword{ys} and applies the function to the corresponding elements of the two lists. It returns a list of the results.
 \end{itemize}
+
+\newpage
 
 \section{PureCake}
 \label{background:purecake}
 %
 
 PureCake is a verified compiler for a pure, lazy, functional programming language. It uses a Haskell-like syntax and type system. PureCake produces CakeML code, which allows for its compilation to be verified from the source to the machine code.
-
-PureCake compilation pipeline consists of four intermediate languages. The overview of the compiler architecture is presented in Figure \ref{fig:purecake}. For this project, the relevant language is the one used in the front end --- PureLang. PureCake differentiates between the compiler language and the language used for transformation proofs. The declaration of the abstract syntax tree for the meta-theory level language is as follows:
 
 \begin{figure}[t]
   \scalebox{0.75}{
@@ -191,12 +191,14 @@ PureCake compilation pipeline consists of four intermediate languages. The overv
 \label{fig:purecake}
 \end{figure}
 
+PureCake compilation pipeline consists of four intermediate languages. The overview of the compiler architecture is presented in Figure \ref{fig:purecake}. For this project, the relevant language is the one used in the front end --- PureLang. PureCake differentiates between the compiler language and the language used for transformation proofs. The declaration of the abstract syntax tree for the meta-theory level language is as follows:
+
 \begin{definition}
 %
 PureLang expressions
-\begin{HOLmath}
+\begin{holthmenv}
   \HOLthm[]{pure_exp.datatype_exp}
-\end{HOLmath}
+\end{holthmenv}
 %  
 \end{definition}
 
@@ -215,9 +217,9 @@ The abstract syntax tree used for compiler implementations is as follows:
 \begin{definition}
 %  
 Compiler-level language expressions
-\begin{HOLmath}
+\begin{holthmenv}
   \HOLthm[]{pure_cexp.datatype_cexp}
-\end{HOLmath}
+\end{holthmenv}
 %  
 \end{definition}
 
@@ -235,7 +237,7 @@ The constructors are the same as the ones for the meta-theory level language, wi
 Several definitions are used in the proofs for this project that should be familiar to anyone with a background in compilers and programming languages. This section defines those terms and explains their meaning in the context of PureLang.
 
 \begin{itemize}
-  \item \keyword{freevars} --- a function that returns the set of free variables in an expression. A variable is free if it is not bound by a lambda abstraction or a \keyword{letrec} binding. This function is defined for the meta-theory level language.
+  \item \keyword{freevars} --- a function that returns the set of free variables in an expression. A variable is free if it is not bound by a lambda abstraction or a \keyword{Letrec} binding. This function is defined for the meta-theory level language.
   \item \keyword{boundvars} --- a function that returns the set of bound variables in an expression. This function is also defined for the meta-theory level language.
   \item \keyword{closed} --- a predicate that returns true if an expression is closed, i.e. it has no free variables. This predicate is defined for the meta-theory level language.
   \item \keyword{exp_of} --- a function that returns the expression corresponding to a compiler-level expression. There is no inverse function that returns the compiler-level expression corresponding to a meta-theory level expression.
