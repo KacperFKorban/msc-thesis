@@ -714,7 +714,7 @@ Where \keyword{Binds} is defined as follows:
 \label{definition:Binds}
 %
 \begin{holthmenv}
-  \HOLthm[width=80]{pure_inline.Binds_def}
+  \HOLthm[width=80,def]{pure_inline.Binds_def}
 \end{holthmenv}
 %
 \end{definition}
