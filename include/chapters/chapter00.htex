@@ -21,13 +21,13 @@ To address the first goal, research into verified compilers is becoming more and
 \label{introduction:compilers:purecake}
 %
 
-PureCake \cite{purecake} is a verified compiler for a Haskell-like language. That is a pure, functional language with lazy evaluation and monadic effects. The syntax supported by PureCake is indentation based to best mimic Haskell's syntax. PureCake also provides proof of its type soundness and the correctness of its Hindley-Milner style type inference. PureCake compiles the source code into CakeML code and it also contains formal proof of the correctness of its compilation process. So if we combine that with the proof of correctness for the source-to-machine-code compilation of CakeML, the whole PureCake compilation pipeline is formally verified to be correct.
+PureCake \cite{purecake} is a verified compiler for a Haskell-like language. The language supported by PureCake is functional with lazy evaluation and monadic effects. The syntax supported by PureCake is indentation based to best mimic Haskell's syntax. PureCake also provides proof of its type soundness and the correctness of its Hindley-Milner style type inference. PureCake compiles the source code into CakeML code and it also contains formal proof of the correctness of its compilation process. So if we combine that with the proof of correctness for the source-to-machine-code compilation of CakeML, the whole PureCake compilation pipeline is formally verified to be correct.
 
 \subsection{Compiler optimizations}
 \label{introduction:compilers:compiler_optimizations}
 %
 
-Research on compiler optimizations aims to address the second goal, \textit{"Efficient code"}, from above. This part, despite being of a lesser priority, is more widely applied in compilers used in production. So the state-of-the-art on compiler optimizations is very high compared to compiler correctness verification. That is mainly because one of the biggest reasons people moved away from low-level languages, was that compilers were able to generate more efficient low-level code than a human programmer.
+Research on compiler optimizations aims to address the second goal, \textit{"Efficient code"}, from above. This part, despite being of a lesser priority, is more widely applied in compilers used in production. So the state-of-the-art on compiler optimizations is very high compared to compiler correctness verification. That is mainly because one of the biggest reasons people moved away from low-level languages, is that compilers were able to generate more efficient low-level code than a human programmer.
 
 
 \section{Project Goal}

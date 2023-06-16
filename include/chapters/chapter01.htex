@@ -282,7 +282,12 @@ This relation was not used directly in the proofs for this project. Instead, oth
 %
 \end{theorem}
 
-This lemma states that for every \keyword{f} map of expressions to substitute if they cover all the free variables of \keyword{x} and \keyword{y} and the results of substituting \keyword{x} and \keyword{y} with \keyword{f} are equivalent, then \keyword{x} and \keyword{y} are equivalent.
+This lemma states that: for every map of expressions to substitute (\keyword{f}) if:
+\begin{itemize}
+  \item it covers all the free variables of \keyword{x} and \keyword{y} and
+  \item the results of substituting \keyword{x} and \keyword{y} with \keyword{f} are equivalent
+\end{itemize}
+then \keyword{x} and \keyword{y} are equivalent.
 
 A similar lemma also exists for weak head evaluation:
 
@@ -314,7 +319,7 @@ This theorem states that if \keyword{f} and \keyword{f'} are equivalent, and \ke
 \label{background:purecake:purecake_proof_approach}
 %
 
-When it comes to proofs, most of the proof logic is decoupled from the implementation functions. That is, instead of verifying specific functions that implement a compiler transformation, relations are defined that capture the core idea of the required transformation. That way the correctness of the syntactic transformation performed by the compiler pass is proved, and whenever the implementation of the compilation phase has to change, the core of the proof stays the same.
+When it comes to proofs, most of the proof logic is decoupled from the implementation functions. Instead of verifying specific functions that implement a compiler transformation, relations are defined that capture the core idea of the required transformation. That way the correctness of the syntactic transformation performed by the compiler pass is proved, and whenever the implementation of the compilation phase has to change, the core of the proof stays the same.
 
 For example, let's take a specific compiler transformation --- the transformation that creates fresh variable names for all bound variables in an expression. The steps for designing this compiler transformation are as follows:
 

@@ -2,7 +2,7 @@
 \label{verified_implementation_of_inlining}
 %
 
-This chapter continues the approach described in Section \ref{verified_inlining_at_the_abstract_level:proof_strategy}. The previous chapter defined the syntactic transformation of multi-inlining and showed that any implementation that the relation follows preserves the semantics of the program. This chapter focuses on the implementation of the inlining pass. It describes the transformation function as well as the correctness proof for the implementation. The correctness proof uses the previously introduces relation and the equivalence theorem proved for the relation.
+This chapter continues the approach described in Section \ref{verified_inlining_at_the_abstract_level:proof_strategy}. The previous chapter defined the syntactic transformation of multi-inlining and showed that any implementation that the relation follows preserves the semantics of the program. This chapter focuses on the implementation of the inlining pass. It describes the transformation function as well as the correctness proof for the implementation. The correctness proof uses the previously introduced relation and the equivalence theorem proved for the relation.
 
 \section{Implementation}
 \label{verified_implementation_of_inlining:implementation}
@@ -40,11 +40,11 @@ The need for passing the set of names might be surprising since the input to the
 The implementation follows quite closely the same pattern as the multi-inlining relation.
 
 \begin{itemize}
-  \item \lstinline{Var} case inlines the variable if it is in the map. It also prevents inlining if the expression to be inserted is a lambda abstraction. It is based on the reasoning presented before, there is no benefit from inlining a lambda that is not immediately applied to at least one argument.
+  \item \lstinline{Var} case inlines the variable if it is in the map. It also prevents inlining if the expression to be inserted is a lambda abstraction. It is based on the reasoning presented before; there is no benefit from inlining a lambda that is not immediately applied to at least one argument.
   \item \lstinline{App} case handles inlining in the function and the argument. It is slightly more interesting than the corresponding case in the relation. This case also handles inlining lambda abstractions, since if the callee is a variable reference, it is certain at this point that it will be called with at least one argument.
   \item \lstinline{Let} case handles adding more declarations to the map. It is worth noting that the heuristic is checked at the point of adding the declaration to the map, instead of at the point of inlining.
   \item \lstinline{Letrec} case behaves similarly to the \lstinline{Let} case. It only adds non-mutually recursive declarations to the map of inline declarations.
-  \item The rest of the cases simply traverse its children and perform inlining deeper. With one exception, \lstinline{NestedCase} is not affected by the transformation. That is because PureCake doesn't support nested cases at present.
+  \item The rest of the cases simply traverse their children and perform inlining deeper. With one exception, \lstinline{NestedCase} is not affected by the transformation. That is because PureCake doesn't support nested cases at present.
 \end{itemize}
 
 Using this declaration, a final function was defined that is correctly initialized and hides all the implementation details.
@@ -74,7 +74,7 @@ Using the multi-inlining relation, a theorem was formulated and proved that show
 %
 \end{theorem}
 
-This theorem is defined for any \lstinline{m, ns, h, e} so it is heuristic-agnostic --- the correctness of the implementation doesn't depend on the heuristic. The assumptions are quite similar to the ones for the equivalence of the relation. The function \lstinline{exp_of} is the link between the two ASTs, it transforms the compiler expressions into PureLang expressions.
+This theorem is defined for any \lstinline{m, ns, h, e} so it is heuristic-agnostic --- the correctness of the implementation doesn't depend on the heuristic. The assumptions are quite similar to the ones for the equivalence of the relation. The function \lstinline{exp_of} is the link between the two ASTs; it transforms the compiler expressions into PureLang expressions.
 
 \begin{itemize}
   \item \lstinline{memory_inv} is a new addition. The relation used a simple linked list for the declaration storage. The implementation uses a map, to be more efficient. This assumption ensures that the contents of the map and the list are the same.

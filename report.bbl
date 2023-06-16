@@ -1,5 +1,12 @@
 \begin{thebibliography}{1}
 
+\bibitem{hollenbeck2022investigating}
+Celeste Hollenbeck, Michael~FP O'Boyle, and Michel Steuwer.
+\newblock Investigating magic numbers: improving the inlining heuristic in the
+  glasgow haskell compiler.
+\newblock In {\em Proceedings of the 15th ACM SIGPLAN International Haskell
+  Symposium}, pages 81--94, 2022.
+
 \bibitem{purecake}
 Hrutvik Kanabar, Samuel Vivien, Oskar Abrahamsson, Magnus~O. Myreen, Michael
   Norrish, Johannes Åman Pohjola, and Riccardo Zanetti.

@@ -24,7 +24,7 @@ Lastly, the project saw the successful development of an unverified \keyword{let
 
 The topic of verified compilation has been getting more and more traction recently, so there are quite a few verified optimizing compilers out there. The most famous of all CompCert \cite{compcert} implements multiple optimization passes, one of which is function inlining. However, the main difference between CompCert's function inlining is that it is done for an imperative language, that only supports top-level function declarations. 
 
-Another well-known verified compiler is CakeML, which is a verified compiler for an ML-like, impure, eagerly evaluated, functional language. PureCake uses CakeML as a back-end, to generate machine code. CakeML being an optimizing compiler has its implementation of function inlining \cite{cakemlinlining}. Though the main difference with this work is that CakeML is still an impure and eagerly-evaluated language.
+Another well-known verified compiler is CakeML, which is a verified compiler for an ML-like, impure, eagerly evaluated, functional language. PureCake uses CakeML as a back-end, to generate machine code. CakeML being an optimizing compiler, has its implementation of function inlining \cite{cakemlinlining}. Though the main difference with this work is that CakeML is still an impure and eagerly-evaluated language.
 
 The research on the Pilsner compiler \cite{pilsner} also touches on topics relevant to this work. It is a compiler for an ML-like language that goes through a CPS-based intermediate language to an assembly-like target. Function inlining optimization is implemented for the intermediate language, because of that the inlining is limited to top-level functions.
 
@@ -35,7 +35,13 @@ The research on the Pilsner compiler \cite{pilsner} also touches on topics relev
 Future work on this project includes the following:
 
 \begin{itemize}
-  \item The current implementation of inlining only uses a very simple heuristic. This should be changed to a more sophisticated one, preferably one inspired by the GHC compiler. This should also be accompanied by a more comprehensive set of benchmarks.
+  \item The current implementation of inlining only uses a very simple size-based heuristic. This should be changed to a more sophisticated one, preferably one inspired by the GHC compiler \cite{secretsghc}. It should use call graphs to analyze the dependencies and call frequencies of the bindings. It should distinguish between different types of inlinable bindings. For example:
+  \begin{itemize}
+    \item Bindings that are unconditionally worth inlining, like non-recursive bindings that are referenced only once;
+    \item Bindings that are conditionally worth inlining, because it will allow for a specific expression to be further simplified;
+    \item Bindings that are small enough, so that the cost of inlining is cheaper than the cost of the function call.
+  \end{itemize}
+  Detecting all of those cases can be hard and costly, so to simplify the conditions, empirically defined constants should be used to approximate the cost and benefit of inlining, just like in the GHC. A similar approach to \cite{hollenbeck2022investigating} could then be used to find the best values for those magic numbers. A comprehensive set of benchmarks should be composed for this purpose, to be able to compare the performance of compiled programs with different parameters. A good starting point for such benchmarks is the set of programs used to evaluate the performance of the PureCake compiler.
   \item At the time of writing, the specialization pass is not verified. This should be done, to be able to introduce the whole inlining pass into the main compiler pipeline.
   \item The biggest benefit of an inlining pass is that it allows for other optimization to be triggered. And so, the more optimizations on the PureLang level are implemented, the more benefit the inlining pass will bring.
 \end{itemize}

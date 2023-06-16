@@ -34,13 +34,13 @@ in
     in map
 \end{lstlisting}
 
-Similarly to the inlining pass, this optimization should also only be used when the recursive function is immediately applied to an argument, otherwise the compiler would just end up adding extra code without any profit. That is also why, the original binding should not be removed in this pass --- only copied.
+Similarly to the inlining pass, this optimization should also only be used when the recursive function is immediately applied to an argument, otherwise the compiler would just end up adding extra code without any profit. That is also why the original binding should not be removed in this pass --- only copied.
 
 \section{Specializing approach}
 \label{verified_specialization:specializing_approach}
 %
 
-The use of specialization is accommodated by the inlining pass. When looking back at the definition of \keyword{list_subst_rel_LetrecInline}. It is precisely the case when specialization should be applied.
+The use of specialization is accommodated by the inlining pass. When looking back at the definition of \keyword{list_subst_rel_LetrecInline}, it is precisely the case when specialization should be applied.
 
 \begin{theorem}
 \label{verified_specialization:specializing_approach:list_subst_rel_LetrecInline}
@@ -51,7 +51,7 @@ The use of specialization is accommodated by the inlining pass. When looking bac
 %
 \end{theorem}
 
-This inlining case for any expression \keyword{x} performs inlining on it, with the result \keyword{y}. Allows inserting a \keyword{Letrec} binding around the result and gives as the result any expression that is equivalent to \keyword{Letrec [(v,t)] y}. And so, if a specialization pass gives an equivalent output expression, it can be used during the inlining pass. That is, specialization can be split into two parts for a given term \keyword{f x}:
+This inlining case for any expression \keyword{x} performs inlining on it, with the result \keyword{y}, allows inserting a \keyword{Letrec} binding around the result and gives as the result any expression that is equivalent to \keyword{Letrec [(v,t)] y}. And so, if a specialization pass gives an equivalent output expression, it can be used during the inlining pass. Specialization can be split into two parts for a given term \keyword{f x}:
 
 \begin{itemize}
   \item First inline the definition for \keyword{f}. This transformation could give the following code:
@@ -99,22 +99,6 @@ The specialization can only be performed on \keyword{letrec}s with bodies that a
   \item The result of the function is the specialized body of the \keyword{Letrec}.
 \end{enumerate}
 
-\begin{figure}
-%
-\begin{definition}
-%
-Function computing the "constant arguments" of a \keyword{Letrec}
-%
-\begin{holthmenv}
-  \HOLthm[def,width=85]{pure_letrec_spec_cexp.const_call_args_def}
-\end{holthmenv}
-%
-\end{definition}
-%
-\caption{\keyword{const_call_args} function implementation}
-\label{fig:const_call_args_implementation}
-\end{figure}
-
 Considering the following example:
 
 \begin{lstlisting}
@@ -145,3 +129,19 @@ in
   in 
     sum_map_to 10 (\x -> x + 1)
 \end{lstlisting}
+
+\begin{figure}
+%
+\begin{definition}
+%
+Function computing the "constant arguments" of a \keyword{Letrec}
+%
+\begin{holthmenv}
+  \HOLthm[def,width=85]{pure_letrec_spec_cexp.const_call_args_def}
+\end{holthmenv}
+%
+\end{definition}
+%
+\caption{\keyword{const_call_args} function implementation}
+\label{fig:const_call_args_implementation}
+\end{figure}

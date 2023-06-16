@@ -74,7 +74,7 @@ The next sections show alternative definitions of the \keyword{subst_rel} relati
 \label{verified_inlining_at_the_abstract_level:single_inlining_relation}
 %
 
-The first part of proving the correctness of inlining is, showing that the code after inlining a single variable is equivalent to the one before inlining. Provided of course that the inlined expression doesn't capture any unwanted variables. This proof can be expressed elegantly thanks to the expression equivalence relation defined for PureLang.
+The first part of proving the correctness of inlining is, to show that the code after inlining a single variable is equivalent to the one before inlining. Provided of course that the inlined expression doesn't capture any unwanted variables. This proof can be expressed elegantly thanks to the expression equivalence relation defined for PureLang.
 
 The base relation for single variable inlining is \keyword{subst_relv x t u}, an inductive relation representing the possibility to inline \keyword{x} for \keyword{v} in \keyword{t} to get \keyword{u}. The definition of this relation is shown in Figure \ref{fig:single_inlining_relation}.
 
@@ -232,7 +232,7 @@ Equivalence of inlining a single definition for \keyword{subst_rel} relation
 %
 \end{theorem}
 
-That is for any \keyword{v}, \keyword{x}, \keyword{t}, \keyword{u}, if \keyword{x} can be inlined for \keyword{v} in \keyword{t} to get \keyword{u}, then \keyword{Let v x t} is equivalent to \keyword{Let v x u}. Worth noticing is that this is specifically true for any \keyword{t}, \keyword{u} where \keyword{t == u}, which essentially means that this theorem shows that the equivalence is true whenever inlining can be performed and does not necessarily have to be performed.
+This theorem expresses that, for any \keyword{v}, \keyword{x}, \keyword{t}, \keyword{u}, if \keyword{x} can be inlined for \keyword{v} in \keyword{t} to get \keyword{u}, then \keyword{Let v x t} is equivalent to \keyword{Let v x u}. Worth noticing is that this is specifically true for any \keyword{t}, \keyword{u} where \keyword{t == u}, which essentially means that this theorem shows that the equivalence is true whenever inlining can be performed and does not necessarily have to be performed.
 
 The proof of this theorem is quite long and constitutes a big part of the work on this project. The following is a brief explanation of the proof.
 
@@ -596,7 +596,7 @@ let f = (\x -> 5)
 in f 1
 \end{lstlisting}
 
-That is the following instance can be constructed:
+The following instance can be constructed:
 \begin{lstlisting}[frame=none]
 list_subst_rel []
   (let f = (\x -> 5) in f 1)

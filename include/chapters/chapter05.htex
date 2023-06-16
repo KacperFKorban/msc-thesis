@@ -2,7 +2,7 @@
 \label{results}
 %
 
-This chapter summarises and evaluates the results obtained in this project. It provides details on the correctness of the pass, as well as the benchmarks showing its quantitative results.
+This chapter summarises and evaluates the results obtained in this project. It provides details on the correctness of the pass, as well as the examples showing its quantitative results.
 
 \section{Correctness Proof}
 \label{results:correctness_proof}
